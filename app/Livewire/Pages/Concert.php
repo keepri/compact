@@ -10,13 +10,6 @@ class Concert extends SitePage
 {
     public function render(): View
     {
-        return view('livewire.pages.concert')
-            ->title($this->title())
-            ->layout('components.layouts.app', $this->layoutData());
-    }
-
-    protected function langKey(): string
-    {
-        return 'concert';
+        return view('livewire.pages.concert');
     }
 }

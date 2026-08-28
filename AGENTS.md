@@ -259,7 +259,7 @@ Four pages, no database: everything the visitor reads comes from `lang/` and `co
 
 Rules that keep this maintainable:
 
-- **`SitePage` owns the meta tags.** A page subclass declares `langKey()` and renders its own view with a literal name (PHPStan level 8 requires a literal `view-string`), then pulls `title()` and `layoutData()` from the base. Add a page by copying `Contact.php`.
+- **The route name is the meta key.** `x-partials.head` reads `<route name>.meta.{title,description,og_title,og_description}` straight from `request()->route()->getName()`, so **a page's route name must match its lang file name** - `concert` the route, `lang/{locale}/concert.php` the copy. A page class only renders its own view with a literal name (PHPStan level 8 requires a literal `view-string`); `SitePage` exists to declare the layout once. Add a page by copying `Contact.php`, and give it a route name matching its lang file. Views with no lang file of their own (the error pages) pass a `:title` to `x-layouts.app` and inherit `site.meta.*` for the rest.
 - **Text goes in `lang/`, structure goes in `config/`.** Member names, era years and line-ups are locale-invariant and live in `config/band.php` exactly once; only roles, titles and prose are translated, keyed by the same slugs. Never duplicate a name across the two lang files.
 - **A block that appears more than twice becomes a component.** `x-site.section`, `x-site.page-header`, `x-site.fact`, `x-site.fact-grid` and `x-site.nav-links` already cover the repeating idioms - reach for them before writing markup.
 - **One nav list.** `config('site.nav')` drives the desktop nav, the mobile drawer and the footer through `x-site.nav-links`; the variants differ only in styling.

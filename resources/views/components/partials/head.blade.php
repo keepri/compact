@@ -1,9 +1,4 @@
-@props([
-    'title' => null,
-    'description' => null,
-    'ogTitle' => null,
-    'ogDescription' => null,
-])
+@props(['title' => null])
 
 @php
     /** @var \App\Services\BrandingService $brandingService */
@@ -14,14 +9,29 @@
     $faviconIco = $brandingService->assetUrl('favicon');
     $themeColor = $brandingService->color('primary');
 
-    // A page title already reads as a phrase, so it gets the brand appended;
-    // with no page title the site-wide one is used verbatim.
-    $documentTitle = $title
-        ? $title . ' | ' . $brandName
-        : __('site.meta.title');
-    $metaDescription = $description ?? __('site.meta.description');
-    $metaOgTitle = $ogTitle ?? $documentTitle;
-    $metaOgDescription = $ogDescription ?? $metaDescription;
+    // Every public page names its lang file after its route, so the meta block
+    // is read straight from the route name. Pages without one - the error
+    // pages - pass a $title instead and fall back to the site-wide meta.
+    $routeKey = request()->route()?->getName();
+    $hasPageMeta =
+        $routeKey !== null &&
+        \Illuminate\Support\Facades\Lang::has("{$routeKey}.meta.title");
+
+    // A page title already reads as a phrase, so it gets the brand appended.
+    $documentTitle = match (true) {
+        $hasPageMeta => __("{$routeKey}.meta.title") . ' | ' . $brandName,
+        (bool) $title => $title . ' | ' . $brandName,
+        default => __('site.meta.title'),
+    };
+    $metaDescription = $hasPageMeta
+        ? __("{$routeKey}.meta.description")
+        : __('site.meta.description');
+    $metaOgTitle = $hasPageMeta
+        ? __("{$routeKey}.meta.og_title")
+        : $documentTitle;
+    $metaOgDescription = $hasPageMeta
+        ? __("{$routeKey}.meta.og_description")
+        : $metaDescription;
 @endphp
 
 <head>

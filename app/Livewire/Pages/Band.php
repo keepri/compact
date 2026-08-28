@@ -10,13 +10,6 @@ class Band extends SitePage
 {
     public function render(): View
     {
-        return view('livewire.pages.band')
-            ->title($this->title())
-            ->layout('components.layouts.app', $this->layoutData());
-    }
-
-    protected function langKey(): string
-    {
-        return 'band';
+        return view('livewire.pages.band');
     }
 }

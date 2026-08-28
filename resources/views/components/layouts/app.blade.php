@@ -1,14 +1,8 @@
-@props([
-    'title' => null,
-    'description' => null,
-    'ogTitle' => null,
-    'ogDescription' => null,
-])
+@props(['title' => null])
 
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<x-partials.head :title="$title" :description="$description" :og-title="$ogTitle"
-    :og-description="$ogDescription" />
+<x-partials.head :title="$title" />
 
 <body class="bg-brand-background text-brand-text flex min-h-screen flex-col">
     <x-partials.header />
