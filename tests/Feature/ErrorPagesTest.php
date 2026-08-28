@@ -20,11 +20,13 @@ test('seeded error pages contain both locales', function (): void {
 test('404 page uses customized error page content', function (): void {
     $this->seed(ErrorPageSeeder::class);
 
-    ErrorPage::query()->where('slug', 'not_found')->update([
-        'heading' => ['en' => 'Custom 404', 'ro' => '404 Personalizat'],
-    ]);
+    $headings = ['en' => 'Custom 404', 'ro' => '404 Personalizat'];
 
-    $this->get('/nonexistent-page')->assertNotFound()->assertSee('Custom 404');
+    ErrorPage::query()->where('slug', 'not_found')->update(['heading' => $headings]);
+
+    $this->get('/nonexistent-page')
+        ->assertNotFound()
+        ->assertSee($headings[app()->getLocale()], false);
 });
 
 test('saving an error page invalidates its cached content', function (): void {
@@ -35,7 +37,7 @@ test('saving an error page invalidates its cached content', function (): void {
     ErrorPage::query()
         ->where('slug', 'not_found')
         ->firstOrFail()
-        ->setTranslation('heading', 'en', 'Refreshed 404')
+        ->setTranslation('heading', app()->getLocale(), 'Refreshed 404')
         ->save();
 
     $this->get('/nonexistent-page')->assertNotFound()->assertSee('Refreshed 404');

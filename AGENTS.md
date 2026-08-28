@@ -1,6 +1,8 @@
-# Agent Guidelines for Laravel 12 / Filament v4 Boilerplate
+# Agent Guidelines for the Compact Site
 
-This repository is a **reusable boilerplate** for bootstrapping new projects. It hosts a **Laravel 12** application using **Filament v4**, **Livewire 3**, and **Tailwind CSS v4**. Follow these guidelines strictly to ensure code consistency, stability, and maintainability.
+This repository is the website of **Compact**, a Romanian rock band founded in 1976, built around its 50-year anniversary concert. It grew out of a Laravel 12 / Filament v4 boilerplate and still carries that tooling: **Laravel 12**, **Filament v4**, **Livewire 3**, **Tailwind CSS v4**. Follow these guidelines strictly to ensure code consistency, stability, and maintainability.
+
+The public site is bilingual (`ro` default, `en`) and lives at `/`, `/concert`, `/formatia` and `/contact`. See section 8 for how it is put together.
 
 ## 1. Build, Lint, and Test Commands
 
@@ -241,14 +243,38 @@ When adding new seeders: make them idempotent, add to `DatabaseSeeder.php`, and 
 - **Makefile:** shortcuts for the dev loop (`dev`, `test`, `format`, `migrate`, `analyse`) plus `db-backup` / `db-restore`, which shell out to `pg_dump` / `psql` using the `DB_*` environment variables.
 - **AI-agent tooling:** `.ai/` is the source of truth for AI-agent tooling (plugins now, commands/skills/agents/rules if added later); `.claude/` only holds `settings.json` plus symlinks into `.ai/` (see `.ai/README.md`). Ships the [ponytail](https://github.com/DietrichGebert/ponytail), [mattpocock/skills](https://github.com/mattpocock/skills), and [caveman](https://github.com/JuliusBrussee/caveman) Claude Code plugins as git submodules under `.ai/plugins/` — run `git submodule update --init` after cloning, and ensure `node` is on `PATH` for ponytail's and caveman's hooks. They only activate once you accept Claude Code's workspace-trust prompt.
 
-## 8. Bootstrapping a New Project From This Boilerplate
-1. Copy the repo (`git clone --recurse-submodules`, or `git submodule update --init` after a plain clone), run `composer install && npm install`.
-2. Copy `.env.example` → `.env`, set `APP_NAME`, `APP_URL`, DB credentials; run `php artisan key:generate`.
+## 8. The Public Site
+
+Four pages, no database: everything the visitor reads comes from `lang/` and `config/`.
+
+| Piece | Where |
+| --- | --- |
+| Routes | `routes/web.php` - Romanian slugs, one URL set for both locales |
+| Page classes | `app/Livewire/Pages/{Home,Concert,Band,Contact}.php`, all extending `SitePage` |
+| Page views | `resources/views/livewire/pages/*.blade.php` |
+| Layout chrome | `components/layouts/app.blade.php` + `components/partials/{head,header,footer}` |
+| Shared UI | `resources/views/components/site/*` |
+| Copy | `lang/{en,ro}/{site,home,concert,contact,band}.php` |
+| Structural data | `config/site.php` (nav, addresses, map URLs), `config/band.php` (members, eras) |
+
+Rules that keep this maintainable:
+
+- **`SitePage` owns the meta tags.** A page subclass declares `langKey()` and renders its own view with a literal name (PHPStan level 8 requires a literal `view-string`), then pulls `title()` and `layoutData()` from the base. Add a page by copying `Contact.php`.
+- **Text goes in `lang/`, structure goes in `config/`.** Member names, era years and line-ups are locale-invariant and live in `config/band.php` exactly once; only roles, titles and prose are translated, keyed by the same slugs. Never duplicate a name across the two lang files.
+- **A block that appears more than twice becomes a component.** `x-site.section`, `x-site.page-header`, `x-site.fact`, `x-site.fact-grid` and `x-site.nav-links` already cover the repeating idioms - reach for them before writing markup.
+- **One nav list.** `config('site.nav')` drives the desktop nav, the mobile drawer and the footer through `x-site.nav-links`; the variants differ only in styling.
+- **`eyebrow` and `hairline`** are `@utility` classes in `resources/css/app.css`, and the `h1-h4` rule in `@layer base` makes every heading uppercase display type. All three are load-bearing for the design.
+- **Reading a translated array with nullable entries** (e.g. a member's optional `note`) must fetch the array whole - `__('band.members')` - because `__()` returns the key, not `null`, for a null value.
+
+### Setting up a fresh clone
+1. `git clone --recurse-submodules` (or `git submodule update --init`), then `composer install && npm install`.
+2. Copy `.env.example` -> `.env`; run `php artisan key:generate`.
 3. Create the PostgreSQL database; run `php artisan migrate --seed`.
-4. Set branding in `config/branding.php` (colors, fonts, assets) and `lang/*/brand.php`.
-5. Run `php artisan storage:link`, then place brand assets (logo, favicons) under `storage/app/public/branding/` - `upload_url()` resolves them through the `FILESYSTEM_DISK` disk, so without the symlink every asset URL 404s.
-6. Change `FILAMENT_DEFAULT_ADMIN_*` values before the first seed; log in at `/admin`.
-7. Start building: domain models, migrations, Filament resources, Livewire pages.
+4. `npm run build`, then `php artisan serve`.
+5. Change `FILAMENT_DEFAULT_ADMIN_*` values before the first seed; log in at `/admin` to edit the 404/500 pages.
+
+Brand colors, fonts and icons are declared in `config/branding.php`. Favicons and the hero image are static files in `public/` and resolve without `storage:link`; only genuine uploads go through `upload_url()`.
+
 
 ===
 

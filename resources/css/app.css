@@ -35,15 +35,15 @@
   --font-display: var(--brand-font-heading), sans-serif;
   --font-sans: var(--brand-font-body), sans-serif;
 
-  /* Sizes keep Tailwind's defaults; only the line heights are overridden. */
+  /* Sizes keep Tailwind's defaults; only the line heights are overridden.
+     3xl and up are deliberately left alone: they are display sizes and need
+     Tailwind's tight leading, not the 1.5 that suits body copy. */
   --text-xs--line-height: 1.5;
   --text-sm--line-height: 1.5;
   --text-base--line-height: 1.5;
   --text-lg--line-height: 1.5;
   --text-xl--line-height: 1.5;
   --text-2xl--line-height: 1.5;
-  --text-3xl--line-height: 1.5;
-  --text-4xl--line-height: 1.5;
 }
 
 @layer base {
@@ -51,27 +51,63 @@
         background-color: var(--brand-background);
         color: var(--brand-text);
     }
+
+    /* Every heading in the design is uppercase display type. This is
+       load-bearing - remove it and every heading on the site changes. */
+    h1,
+    h2,
+    h3,
+    h4 {
+        font-family: var(--brand-font-heading), sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        font-weight: 600;
+    }
+}
+
+/* The small caps label that opens almost every block on the site. */
+@utility eyebrow {
+    font-family: var(--brand-font-heading), sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.32em;
+    font-size: 0.75rem;
+    color: var(--brand-primary);
+}
+
+/* The 1px rule under a section heading, fading out to the right. */
+@utility hairline {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(
+        to right,
+        var(--brand-primary),
+        color-mix(in oklch, var(--brand-primary) 15%, transparent),
+        transparent
+    );
 }
 
 /* Component-specific brand styles now use Tailwind classes with dynamic variables */
 @layer components {
     /* Button Components */
     .btn-primary {
-        @apply bg-transparent text-center font-medium cursor-pointer py-2 px-4 rounded transition duration-150;
-    }
-
-    .btn-primary:hover {
-        background-color: var(--brand-surface-hover);
-    }
-
-    .btn-outline {
-        @apply bg-transparent text-brand-primary text-center font-medium cursor-pointer py-2 px-4 rounded transition duration-150;
+        @apply bg-brand-primary text-brand-background inline-flex cursor-pointer items-center justify-center gap-2 px-5 py-3 text-center text-xs tracking-[0.2em] uppercase transition-opacity duration-150;
+        font-family: var(--brand-font-heading), sans-serif;
         border: 1px solid var(--brand-primary);
     }
 
+    .btn-primary:hover {
+        opacity: 0.9;
+    }
+
+    .btn-outline {
+        @apply text-brand-text inline-flex cursor-pointer items-center justify-center gap-2 bg-transparent px-5 py-3 text-center text-xs tracking-[0.2em] uppercase transition-colors duration-150;
+        font-family: var(--brand-font-heading), sans-serif;
+        border: 1px solid var(--brand-border);
+    }
+
     .btn-outline:hover {
-        background-color: var(--brand-primary);
-        color: var(--brand-background);
+        border-color: var(--brand-primary);
+        color: var(--brand-primary);
     }
 
     .btn-primary:disabled,
@@ -99,7 +135,7 @@
     }
 
     .btn-lg {
-        @apply py-3 px-6 text-lg;
+        @apply px-8 py-3 text-sm;
     }
 
     /* Typography */

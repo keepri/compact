@@ -4,25 +4,34 @@ declare(strict_types=1);
 
 return [
     'name' => env('BRAND_NAME') ?: 'brand.name',
+
+    /*
+     * Stage black and amp yellow. The hex values are exact sRGB conversions of
+     * the oklch palette the site was designed in - do not hand-tune them:
+     *   background  oklch(0.13 0 0)       surface     oklch(0.17 0 0)
+     *   secondary   oklch(0.22 0 0)       border      oklch(0.27 0 0)
+     *   text        oklch(0.96 0.005 90)  primary     oklch(0.83 0.17 92)
+     * Filament parses these through Color::hex(), so they must stay hex.
+     */
     'colors' => [
-        'primary' => env('BRAND_COLOR_PRIMARY') ?: '#000000',
-        'primary_hover' => env('BRAND_COLOR_PRIMARY_HOVER') ?: '#333333',
-        'secondary' => env('BRAND_COLOR_SECONDARY') ?: '#F5F5F5',
-        'accent' => env('BRAND_COLOR_ACCENT') ?: '#000000',
-        'background' => env('BRAND_COLOR_BACKGROUND') ?: '#FFFFFF',
-        'surface' => env('BRAND_COLOR_SURFACE') ?: '#F5F5F5',
-        'surface_hover' => '#EEEEEE',
-        'text' => env('BRAND_COLOR_TEXT') ?: '#000000',
-        'text_secondary' => '#6b6b6b',
-        'text_tertiary' => '#9ca3af',
-        'border' => '#E5E5E5',
+        'primary' => env('BRAND_COLOR_PRIMARY') ?: '#EFC200',
+        'primary_hover' => env('BRAND_COLOR_PRIMARY_HOVER') ?: '#DEB200',
+        'secondary' => env('BRAND_COLOR_SECONDARY') ?: '#1B1B1B',
+        'accent' => env('BRAND_COLOR_ACCENT') ?: '#EFC200',
+        'background' => env('BRAND_COLOR_BACKGROUND') ?: '#070707',
+        'surface' => env('BRAND_COLOR_SURFACE') ?: '#0F0F0F',
+        'surface_hover' => '#161616',
+        'text' => env('BRAND_COLOR_TEXT') ?: '#F3F2EE',
+        'text_secondary' => '#999895',
+        'text_tertiary' => '#73716E',
+        'border' => '#262626',
         'success' => '#2F8F4E',
         'warning' => '#D39E2A',
-        'danger' => '#C93B2B',
+        'danger' => '#BE2323',
     ],
     'typography' => [
         'heading' => [
-            'family' => env('BRAND_FONT_HEADING') ?: 'Inter',
+            'family' => env('BRAND_FONT_HEADING') ?: 'Oswald',
             'google_font' => true,
             'weights' => [
                 0 => 400,
@@ -32,7 +41,7 @@ return [
             ],
         ],
         'body' => [
-            'family' => env('BRAND_FONT_BODY') ?: 'Inter',
+            'family' => env('BRAND_FONT_BODY') ?: 'Barlow',
             'google_font' => true,
             'weights' => [
                 0 => 400,
@@ -53,11 +62,13 @@ return [
             'width' => 150,
             'height' => 50,
         ],
+        // Static build artifacts served straight from public/ - they are not user
+        // uploads, so they deliberately bypass upload_url() and the storage disk.
         // Additional icons (apple-touch, PNG sizes, manifest, browserconfig) are
         // intentionally not declared - add the keys here and the matching tags in
         // resources/views/components/partials/head.blade.php once the project
         // actually ships those files.
-        'favicon' => '/branding/icons/favicon.ico',
-        'favicon_svg' => '/branding/icons/favicon.svg',
+        'favicon' => '/favicon.ico',
+        'favicon_svg' => null,
     ],
 ];

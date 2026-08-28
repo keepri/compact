@@ -36,3 +36,6 @@ _ide_helper_models.php
 # Local infrastructure config (may contain credentials)
 /.aws
 /backups
+
+# Source React site, kept only until the Blade port is verified
+/react

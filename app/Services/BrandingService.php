@@ -78,7 +78,9 @@ final class BrandingService
                 }
             }
 
-            $fonts[] = str_replace(' ', '+', $family) . ':wght@' . implode(',', $weights);
+            // The CSS2 API separates weights within one axis with semicolons;
+            // a comma-separated list is rejected with a 400.
+            $fonts[] = str_replace(' ', '+', $family) . ':wght@' . implode(';', $weights);
         }
 
         if ($fonts === []) {
@@ -114,6 +116,13 @@ final class BrandingService
 
         if (str_starts_with($path, 'http')) {
             return $path;
+        }
+
+        // Assets shipped in public/ (favicons, static marketing images) are build
+        // artifacts, not uploads - resolve them without the storage disk so they
+        // do not silently 404 when storage:link is missing.
+        if (is_file(public_path($path))) {
+            return asset($path);
         }
 
         return upload_url(mb_ltrim($path, '/'));
