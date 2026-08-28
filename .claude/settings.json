@@ -1,0 +1,27 @@
+{
+    "extraKnownMarketplaces": {
+        "ponytail": {
+            "source": {
+                "source": "directory",
+                "path": ".ai/plugins/ponytail"
+            }
+        },
+        "mattpocock": {
+            "source": {
+                "source": "directory",
+                "path": ".ai/plugins/mattpocock-skills"
+            }
+        },
+        "caveman": {
+            "source": {
+                "source": "directory",
+                "path": ".ai/plugins/caveman"
+            }
+        }
+    },
+    "enabledPlugins": {
+        "ponytail@ponytail": true,
+        "mattpocock-skills@mattpocock": true,
+        "caveman@caveman": true
+    }
+}

@@ -1,0 +1,1 @@
+../../.ai/plugins/caveman/src/plugins/opencode/commands/caveman.md

@@ -1,0 +1,26 @@
+
+/* Typography - apply the brand body font (see config/branding.php) */
+.fi-layout,
+.fi-simple-layout {
+    font-family: var(--brand-font-body), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Topbar padding */
+.fi-topbar {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+    min-height: 5rem !important;
+}
+
+/* Logo in topbar and sidebar header */
+.fi-topbar .fi-logo,
+.fi-sidebar-header .fi-logo,
+.fi-sidebar-header .fi-logo-ctn {
+    max-height: 2.5rem !important;
+    height: 2.5rem !important;
+    width: auto !important;
+}
+
+.fi-sidebar-header {
+    padding: 1.5rem !important;
+}

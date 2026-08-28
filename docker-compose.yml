@@ -1,0 +1,38 @@
+services:
+  app:
+    build:
+      context: .
+      args:
+        APP_PORT: ${APP_PORT}
+        NODE_ENV: ${NODE_ENV:-production}
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+      - "${VITE_PORT}:${VITE_PORT}"
+    volumes:
+      - .:/var/www/html
+      - vendor_cache:/var/www/html/vendor
+      - node_modules_cache:/var/www/html/node_modules
+      - build_assets:/var/www/html/public/build
+    env_file:
+      - .env
+    depends_on:
+      - queue
+
+  queue:
+    build: .
+    command: php artisan queue:work --tries=3 --timeout=90
+    volumes:
+      - ./app:/var/www/html/app
+      - ./config:/var/www/html/config
+      - ./database:/var/www/html/database
+      - ./routes:/var/www/html/routes
+      - ./storage:/var/www/html/storage
+      - ./.env:/var/www/html/.env
+    env_file:
+      - .env
+    restart: unless-stopped
+
+volumes:
+  vendor_cache:
+  node_modules_cache:
+  build_assets:

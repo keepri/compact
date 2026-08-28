@@ -1,0 +1,1 @@
+../../.ai/plugins/ponytail/.opencode/command/ponytail-review.md

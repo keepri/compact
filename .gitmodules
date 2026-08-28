@@ -1,0 +1,9 @@
+[submodule "ponytail"]
+	path = .ai/plugins/ponytail
+	url = https://github.com/DietrichGebert/ponytail.git
+[submodule "mattpocock-skills"]
+	path = .ai/plugins/mattpocock-skills
+	url = https://github.com/mattpocock/skills.git
+[submodule "caveman"]
+	path = .ai/plugins/caveman
+	url = https://github.com/JuliusBrussee/caveman.git

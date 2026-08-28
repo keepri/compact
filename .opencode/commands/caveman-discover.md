@@ -1,0 +1,5 @@
+---
+description: Find every LLM workflow in the current repository and label it, so Caveman Cloud groups spend by what the code actually does (support-reply, nightly-digest) instead of one anonymous bucket. Use when the user pastes the Caveman discovery prompt, says "discover workflows", or asks to break LLM spend down by workflow. The repo should already route through the Caveman gateway (the caveman-setup skill does that part).
+---
+
+Invoke the "caveman-discover" skill. Load and follow its instructions now.

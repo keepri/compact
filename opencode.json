@@ -1,0 +1,18 @@
+{
+    "$schema": "https://opencode.ai/config.json",
+    "plugin": [
+        "./.ai/plugins/ponytail/.opencode/plugins/ponytail.mjs",
+        "./.ai/plugins/caveman/src/plugins/opencode/plugin.js"
+    ],
+    "mcp": {
+        "laravel-boost": {
+            "type": "local",
+            "enabled": true,
+            "command": [
+                "php",
+                "artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}

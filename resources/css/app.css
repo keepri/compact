@@ -1,0 +1,119 @@
+/* `source(none)` disables Tailwind's automatic file detection: every scanned
+   path is listed explicitly below, so the build depends only on files we name.
+   Never point a @source at generated output (storage/framework/views holds
+   Blade's compiled-template cache) - the CSS would then vary with runtime state. */
+@import "tailwindcss" source(none);
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@source '../views';
+@source '../js';
+@source '../../app/Filament';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+/* Theme mapping for the boilerplate.
+   The `brand-*` utilities and font families resolve to the `--brand-*` custom
+   properties emitted by components/partials/branding-styles.blade.php, which
+   reads its values from config/branding.php. Scanned paths are the @source
+   lines above - this block only maps the theme. */
+@theme {
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-primary-hover: var(--brand-primary-hover);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-background: var(--brand-background);
+  --color-brand-surface: var(--brand-surface);
+  --color-brand-surface-hover: var(--brand-surface-hover);
+  --color-brand-text: var(--brand-text);
+  --color-brand-text-secondary: var(--brand-text-secondary);
+  --color-brand-text-tertiary: var(--brand-text-tertiary);
+  --color-brand-border: var(--brand-border);
+  --color-brand-success: var(--brand-success);
+  --color-brand-warning: var(--brand-warning);
+  --color-brand-danger: var(--brand-danger);
+
+  --font-display: var(--brand-font-heading), sans-serif;
+  --font-sans: var(--brand-font-body), sans-serif;
+
+  /* Sizes keep Tailwind's defaults; only the line heights are overridden. */
+  --text-xs--line-height: 1.5;
+  --text-sm--line-height: 1.5;
+  --text-base--line-height: 1.5;
+  --text-lg--line-height: 1.5;
+  --text-xl--line-height: 1.5;
+  --text-2xl--line-height: 1.5;
+  --text-3xl--line-height: 1.5;
+  --text-4xl--line-height: 1.5;
+}
+
+@layer base {
+    html {
+        background-color: var(--brand-background);
+        color: var(--brand-text);
+    }
+}
+
+/* Component-specific brand styles now use Tailwind classes with dynamic variables */
+@layer components {
+    /* Button Components */
+    .btn-primary {
+        @apply bg-transparent text-center font-medium cursor-pointer py-2 px-4 rounded transition duration-150;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--brand-surface-hover);
+    }
+
+    .btn-outline {
+        @apply bg-transparent text-brand-primary text-center font-medium cursor-pointer py-2 px-4 rounded transition duration-150;
+        border: 1px solid var(--brand-primary);
+    }
+
+    .btn-outline:hover {
+        background-color: var(--brand-primary);
+        color: var(--brand-background);
+    }
+
+    .btn-primary:disabled,
+    .btn-outline:disabled,
+    .btn-primary[aria-disabled='true'],
+    .btn-outline[aria-disabled='true'] {
+        @apply cursor-not-allowed;
+        opacity: 0.55;
+        filter: saturate(0.75);
+        transform: none;
+        box-shadow: none;
+    }
+
+    .btn-primary:disabled:hover,
+    .btn-outline:disabled:hover,
+    .btn-primary[aria-disabled='true']:hover,
+    .btn-outline[aria-disabled='true']:hover {
+        background-color: inherit;
+        color: inherit;
+        border-color: inherit;
+    }
+
+    .btn-sm {
+        @apply py-1.5 px-3 text-sm;
+    }
+
+    .btn-lg {
+        @apply py-3 px-6 text-lg;
+    }
+
+    /* Typography */
+    .heading-page {
+        @apply text-4xl font-bold;
+        font-family: var(--brand-font-heading);
+    }
+
+    /* Link Components */
+    .link-brand {
+        @apply text-brand-primary font-medium transition duration-200 hover:text-brand-primary-hover;
+    }
+
+    .link-underline {
+        @apply underline underline-offset-2 hover:underline-offset-4;
+    }
+}
