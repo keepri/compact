@@ -63,6 +63,12 @@
         letter-spacing: 0.02em;
         font-weight: 600;
     }
+
+    /* Alpine strips this attribute once it boots; without the rule the mobile
+       drawer renders open until then. */
+    [x-cloak] {
+        display: none !important;
+    }
 }
 
 /* The small caps label that opens almost every block on the site. */

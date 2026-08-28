@@ -1,15 +1,14 @@
-@props(['cols' => 2, 'as' => 'div'])
+@props(['cols' => 2])
 
 @php
     // Class strings must be literal for Tailwind to see them.
     $gridClass = match ((int) $cols) {
-        2 => 'md:grid-cols-2',
         3 => 'sm:grid-cols-2 lg:grid-cols-3',
-        default => '',
+        default => 'md:grid-cols-2',
     };
 @endphp
 
-<{{ $as }}
+<div
     {{ $attributes->class(['border-brand-border bg-brand-border grid gap-px border', $gridClass]) }}>
     {{ $slot }}
-    </{{ $as }}>
+</div>

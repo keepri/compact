@@ -18,20 +18,33 @@
         ],
     ];
     $program = (array) __('concert.program.items');
+
+    // The venue map embed, with its language parameter pointed at the active
+    // locale so the map labels match the rest of the page.
+    $mapEmbed = str_replace(
+        ':locale',
+        app()->getLocale(),
+        (string) config('site.maps.embed'),
+    );
 @endphp
 
 <div>
     <x-site.page-header :eyebrow="__('concert.header.eyebrow')" :title="__('concert.header.title')" :intro="__('concert.header.intro')" />
 
     <x-site.section :eyebrow="__('concert.details.eyebrow')" :title="__('concert.details.title')">
-        <x-site.fact-grid as="dl" :cols="2">
+        {{-- Written out rather than composed from x-site.fact-grid: the event
+             details are a real definition list, and a <dl> may only contain
+             <dt>/<dd> (optionally wrapped in a <div>). --}}
+        <dl
+            class="border-brand-border bg-brand-border grid gap-px border md:grid-cols-2">
             @foreach ($details as $detail)
                 <x-site.fact-cell wire:key="detail-{{ $loop->index }}">
-                    <x-site.fact as="dl" :label="$detail['label']"
-                        :value="$detail['value']" />
+                    <dt class="eyebrow">{{ $detail['label'] }}</dt>
+                    <dd class="font-display mt-3 text-xl uppercase">
+                        {{ $detail['value'] }}</dd>
                 </x-site.fact-cell>
             @endforeach
-        </x-site.fact-grid>
+        </dl>
     </x-site.section>
 
     <x-site.section :eyebrow="__('concert.venue.eyebrow')" :title="__('concert.venue.title')">
@@ -48,7 +61,7 @@
             </div>
             <div
                 class="border-brand-border bg-brand-surface group aspect-video border lg:col-span-2">
-                <iframe src="{{ $this->mapEmbedUrl() }}"
+                <iframe src="{{ $mapEmbed }}"
                     title="{{ __('concert.venue.map_title') }}"
                     class="h-full w-full contrast-125 grayscale transition duration-300 group-hover:grayscale-0"
                     loading="lazy"

@@ -114,17 +114,9 @@ final class BrandingService
             return null;
         }
 
-        if (str_starts_with($path, 'http')) {
-            return $path;
-        }
-
-        // Assets shipped in public/ (favicons, static marketing images) are build
-        // artifacts, not uploads - resolve them without the storage disk so they
-        // do not silently 404 when storage:link is missing.
-        if (is_file(public_path($path))) {
-            return asset($path);
-        }
-
-        return upload_url(mb_ltrim($path, '/'));
+        // Every caller asks for a favicon, and favicons are static files in
+        // public/ - so they resolve without the storage disk and never 404 for
+        // want of a storage:link.
+        return str_starts_with($path, 'http') ? $path : asset($path);
     }
 }

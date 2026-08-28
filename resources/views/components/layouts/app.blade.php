@@ -11,7 +11,7 @@
     :og-description="$ogDescription" />
 
 <body class="bg-brand-background text-brand-text flex min-h-screen flex-col">
-    <livewire:site.header />
+    <x-partials.header />
 
     <main class="flex-1">
         {{ $slot ?? '' }}

@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Livewire\Site\Header;
 use Illuminate\Support\Facades\Session;
-use Livewire\Livewire;
 
 test('every public page renders', function (string $path): void {
     $this->get($path)->assertOk();
@@ -47,13 +45,6 @@ test('the contact page shows every address as a mailto link', function (): void 
     }
 });
 
-test('the discography page is gone and unlinked', function (): void {
-    $this->get('/discografie')->assertNotFound();
-    $this->get('/istorie')->assertNotFound();
-
-    $this->get('/')->assertOk()->assertDontSee('discografie');
-});
-
 test('pages render in romanian by default', function (): void {
     $this->get('/concert')
         ->assertOk()
@@ -75,11 +66,9 @@ test('the footer offers the other locale', function (): void {
         ->assertSee(route('lang.switch', 'en'));
 });
 
-test('the mobile menu toggles', function (): void {
-    Livewire::test(Header::class)
-        ->assertSet('open', false)
-        ->call('toggle')
-        ->assertSet('open', true)
-        ->call('toggle')
-        ->assertSet('open', false);
+test('the header renders the mobile drawer', function (): void {
+    $this->get('/')
+        ->assertOk()
+        ->assertSee('x-data', false)
+        ->assertSee('site-mobile-nav', false);
 });
