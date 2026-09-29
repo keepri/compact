@@ -13,7 +13,7 @@ return [
     'header' => [
         'eyebrow' => 'Line-up',
         'title' => 'The band',
-        'intro' => 'Five decades of music, one constant: the rock. From the founding line-up of 1976 to the anniversary line-up of today.',
+        'intro' => 'Five decades of music, one constant: the rock. From the founding line-up of 1976 to the anniversary line-up of today. Over 6,000 concerts, over 350,000 spectators since 2023.',
     ],
 
     'lineup' => [
@@ -21,25 +21,36 @@ return [
         'title' => 'The anniversary line-up',
     ],
 
+    'in_memoriam' => [
+        'eyebrow' => '2026',
+        'title' => 'In memoriam',
+        'text' => 'Along the way, we lost colleagues, friends and comrades who believed in freedom and rock music.',
+        'names' => 'Teo, Emil, Leo and Lelu',
+    ],
+
     'members' => [
         'costi-camarasan' => ['role' => 'Guitar · Vocals', 'note' => 'Founding member, 1976'],
         'adrian-ordean' => ['role' => 'Guitar', 'note' => null],
         'adrian-marias' => ['role' => 'Vocals', 'note' => null],
-        'robert-risteiu' => ['role' => 'Drums', 'note' => null],
+        'robert-risteiu' => ['role' => 'Drums · Live audio/video', 'note' => null],
         'marius-macavei' => ['role' => 'Bass', 'note' => null],
-        'wily-gorgan' => ['role' => 'Keyboards', 'note' => null],
+        'willy-gorgan' => ['role' => 'Keyboards', 'note' => null],
     ],
 
     'timeline' => [
         'eyebrow' => '1976 – 2026',
         'title' => 'A chronology of line-ups',
+        'founders_label' => 'Founders:',
         'lineup_label' => 'Line-up:',
+        'discography_label' => 'Albums:',
+        'awards_label' => 'Awards:',
+        'international_label' => 'Events:',
     ],
 
     'eras' => [
         '1976-1979' => [
             'title' => 'The beginnings in Cluj-Napoca',
-            'description' => 'Compact is born in Cluj-Napoca in 1976. A year later the band is joined by singer Pascal Goelot, a student from Congo, and towards the end of the decade the line-up goes through its first changes, with Marian Manoliu on guitar.',
+            'description' => 'Compact is born in Cluj-Napoca in 1976 at the Babeș-Bolyai University Club, founded by Costi Cămărășan, Teo Peter, Marius Luca and Cornel Moldovan. A year later the band is joined by singer Pascal Goelot, a student from Congo, and towards the end of the decade the line-up goes through its first changes, with Marian Manoliu on guitar.',
         ],
         '1980-1981' => [
             'title' => 'Changes and a first break-up',
@@ -75,7 +86,7 @@ return [
         ],
         '2026' => [
             'title' => 'Today — 50 years',
-            'description' => 'Half a century on from its founding, Compact takes the stage in its anniversary line-up.',
+            'description' => 'Half a century on from its founding, Compact takes the stage in its anniversary line-up. The studio albums in Compact\'s portfolio contain the soulful songs that brought joy, love and hope to the many who have been with them for 50 years.',
         ],
     ],
 ];

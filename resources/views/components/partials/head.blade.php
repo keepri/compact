@@ -1,13 +1,7 @@
 @props(['title' => null])
 
 @php
-    /** @var \App\Services\BrandingService $brandingService */
-    $brandingService = app(\App\Services\BrandingService::class);
-    $fontUrl = $brandingService->googleFontsUrl();
-    $brandName = $brandingService->name();
-    $faviconSvg = $brandingService->assetUrl('favicon_svg');
-    $faviconIco = $brandingService->assetUrl('favicon');
-    $themeColor = $brandingService->color('primary');
+    $brandName = __('brand.name');
 
     // Every public page names its lang file after its route, so the meta block
     // is read straight from the route name. Pages without one - the error
@@ -32,6 +26,10 @@
     $metaOgDescription = $hasPageMeta
         ? __("{$routeKey}.meta.og_description")
         : $metaDescription;
+    $metaImage = asset('images/compact-band-diagonal.webp');
+    $openGraphLocale = \App\Enums\SupportedLocale::from(
+        app()->getLocale(),
+    )->openGraphLocale();
 @endphp
 
 <head>
@@ -40,36 +38,31 @@
 
     <title>{{ $documentTitle }}</title>
     <meta name="description" content="{{ $metaDescription }}">
+    <link rel="canonical" href="{{ url()->current() }}">
 
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="{{ $brandName }}">
     <meta property="og:title" content="{{ $metaOgTitle }}">
     <meta property="og:description" content="{{ $metaOgDescription }}">
+    <meta property="og:image" content="{{ $metaImage }}">
     <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:locale"
-        content="{{ str_replace('-', '_', app()->getLocale()) }}">
+    <meta property="og:locale" content="{{ $openGraphLocale }}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ $metaOgTitle }}">
     <meta name="twitter:description" content="{{ $metaOgDescription }}">
+    <meta name="twitter:image" content="{{ $metaImage }}">
 
-    <!-- Dynamic Google Fonts -->
-    @if ($fontUrl)
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="{{ $fontUrl }}" rel="stylesheet">
-    @endif
+    {{-- The two brand families, declared in resources/css/app.css. --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Hind:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 
-    @if ($faviconSvg)
-        <link rel="icon" type="image/svg+xml" href="{{ $faviconSvg }}">
-    @endif
-    @if ($faviconIco)
-        <link rel="icon" type="image/x-icon" href="{{ $faviconIco }}">
-        <link rel="shortcut icon" href="{{ $faviconIco }}">
-    @endif
-    <meta name="application-name" content="{{ $brandName }}">
-    <meta name="apple-mobile-web-app-title" content="{{ $brandName }}">
-    <meta name="theme-color" content="{{ $themeColor }}">
-    @vite(['resources/css/app.css', 'resources/js/app.jsx'])
-    <x-partials.branding-styles />
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <meta name="theme-color" content="#EFC200">
+    <x-partials.structured-data />
+
+    @vite('resources/css/app.css')
     @livewireStyles
 </head>

@@ -4,7 +4,6 @@
     'href' => null,
     'type' => 'button',
     'disabled' => false,
-    'elevated' => false,
 ])
 
 @php
@@ -13,29 +12,21 @@
         default => 'btn-primary',
     };
 
-    $sizeClass = match ($size) {
-        'sm' => 'btn-sm',
-        'lg' => 'btn-lg',
-        default => '',
-    };
-
-    $fullClasses = trim($classes . ' ' . $sizeClass);
+    if ($size === 'lg') {
+        $classes .= ' btn-lg';
+    }
 
     $isDisabled = filter_var($disabled, FILTER_VALIDATE_BOOL);
-
-    if (filter_var($elevated, FILTER_VALIDATE_BOOL)) {
-        $fullClasses .= ' shadow-lg';
-    }
 @endphp
 
 @if ($href && !$isDisabled)
-    <a href="{{ $href }}" {{ $attributes->class([$fullClasses]) }}>
+    <a href="{{ $href }}" {{ $attributes->class([$classes]) }}>
         {{ $slot }}
     </a>
 @else
     <button type="{{ $type }}" @disabled($isDisabled)
         aria-disabled="{{ $isDisabled ? 'true' : 'false' }}"
-        {{ $attributes->class([$fullClasses]) }} wire:loading.attr="disabled"
+        {{ $attributes->class([$classes]) }} wire:loading.attr="disabled"
         wire:offline.attr="disabled">
         {{ $slot }}
     </button>

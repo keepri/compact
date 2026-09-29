@@ -29,7 +29,7 @@ test('404 page uses customized error page content', function (): void {
         ->assertSee($headings[app()->getLocale()], false);
 });
 
-test('saving an error page invalidates its cached content', function (): void {
+test('an edited error page shows its new content on the next request', function (): void {
     $this->seed(ErrorPageSeeder::class);
 
     $this->get('/nonexistent-page')->assertNotFound();

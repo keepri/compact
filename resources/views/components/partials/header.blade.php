@@ -1,9 +1,10 @@
 <header x-data="{ open: false }"
-    class="border-brand-border bg-brand-background/95 sticky top-0 z-50 border-b backdrop-blur">
-    <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
+    class="border-brand-text bg-brand-background sticky top-0 z-50 border-b-2">
+    <div
+        class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4">
         <a href="{{ route('home') }}"
-            class="font-display text-xl uppercase tracking-[0.3em]">
-            <x-brand.name />
+            class="font-display text-2xl uppercase leading-none tracking-tight">
+            {{ __('brand.name') }}<span class="text-brand-primary">.</span>
         </a>
 
         <nav class="hidden items-center gap-8 md:flex">
@@ -32,7 +33,7 @@
     </div>
 
     <nav id="site-mobile-nav" x-show="open" x-cloak
-        class="border-brand-border flex flex-col border-t md:hidden">
+        class="border-brand-text flex flex-col border-t-2 md:hidden">
         <x-site.nav-links variant="mobile" />
     </nav>
 </header>

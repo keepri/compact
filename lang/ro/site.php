@@ -16,7 +16,8 @@ return [
     ],
 
     'footer' => [
-        'tagline' => 'Rock românesc din 1976. Cinci decenii de scenă, chitare și public.',
+        'slogan' => 'Legenda merge mai departe!',
+        'tagline' => 'Rock românesc din 1976. Cinci decenii de scenă, chitări și public.',
         'nav_heading' => 'Navigare',
         'contact_heading' => 'Contact',
         'booking' => 'Booking',

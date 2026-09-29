@@ -19,4 +19,15 @@ enum SupportedLocale: string
             self::cases(),
         );
     }
+
+    /**
+     * Open Graph wants a language_TERRITORY pair, not a bare language code.
+     */
+    public function openGraphLocale(): string
+    {
+        return match ($this) {
+            self::En => 'en_GB',
+            self::Ro => 'ro_RO',
+        };
+    }
 }

@@ -20,8 +20,8 @@ class ErrorPageSeeder extends Seeder
             [
                 'type' => '404',
                 'heading' => [
-                    'en' => 'Lost Your Way?',
-                    'ro' => 'Ai Pierdut Drumul?',
+                    'en' => 'Page not found',
+                    'ro' => 'Pagină negăsită',
                 ],
                 'message' => [
                     'en' => "The page you're looking for doesn't exist or has been moved.",
@@ -36,12 +36,12 @@ class ErrorPageSeeder extends Seeder
             [
                 'type' => '500',
                 'heading' => [
-                    'en' => 'Something Went Wrong',
-                    'ro' => 'Ceva N-a Mers Bine',
+                    'en' => "This page didn't load",
+                    'ro' => 'Această pagină nu s-a încărcat',
                 ],
                 'message' => [
-                    'en' => "We're experiencing some technical difficulties right now. Please try again in a moment.",
-                    'ro' => 'Întâmpinăm câteva dificultăți tehnice acum. Te rugăm să încerci din nou în câteva momente.',
+                    'en' => 'Something went wrong on our end. You can try refreshing or head back home.',
+                    'ro' => 'Ceva nu a mers bine la noi. Poți reîncărca pagina sau reveni acasă.',
                 ],
             ],
         );

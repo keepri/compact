@@ -16,6 +16,7 @@ return [
     ],
 
     'footer' => [
+        'slogan' => 'The legend lives on!',
         'tagline' => 'Romanian rock since 1976. Five decades of stages, guitars and crowds.',
         'nav_heading' => 'Navigation',
         'contact_heading' => 'Contact',

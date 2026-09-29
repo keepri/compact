@@ -2,7 +2,16 @@
 
 This repository is the website of **Compact**, a Romanian rock band founded in 1976, built around its 50-year anniversary concert. It grew out of a Laravel 12 / Filament v4 boilerplate and still carries that tooling: **Laravel 12**, **Filament v4**, **Livewire 3**, **Tailwind CSS v4**. Follow these guidelines strictly to ensure code consistency, stability, and maintainability.
 
-The public site is bilingual (`ro` default, `en`) and lives at `/`, `/concert`, `/formatia` and `/contact`. See section 8 for how it is put together.
+The public site is bilingual (`ro` default, `en`) and lives at `/`, `/concert`, `/formatia` and `/contact`. See section 9 for how it is put together.
+
+## 0. Asking, Not Guessing
+
+**Whenever a decision is the owner's to make, ask with the `AskUserQuestion`
+tool - never as prose in the reply.** In particular:
+
+- A review, audit or plan that ends in a list of options: present the list through the tool.
+- Anything that deletes code, drops a dependency, or changes how the site or the panel looks.
+- A judgement call between two defensible approaches that the code cannot settle.
 
 ## 1. Build, Lint, and Test Commands
 
@@ -90,12 +99,11 @@ The individual tools, if you need to run one on its own:
 | --- | --- | --- |
 | PHP | `vendor/bin/pint` | `pint.json` (PSR-12 + project rules) |
 | Blade markup + Tailwind class order in Blade | `blade-formatter` over `resources/**/*.blade.php` | `.bladeformatterrc.json` (4-space indent, 80-column wrap, `sortTailwindcssClasses`) |
-| Tailwind class order in JS/JSX | `rustywind` over `resources/js` | none (default order) |
 
 Two rules keep this stable — break either one and `format:check` starts failing:
 
-- **Never nest a multi-line `@php ... @endphp` block inside a Blade directive** (`@foreach`, `@if`, ...). blade-formatter mis-indents it and mangles the PHP. Hoist the logic into the single `@php` block at the top of the template instead (see `resources/views/components/partials/branding-styles.blade.php`).
-- **One sorter per file type.** blade-formatter sorts Tailwind classes in Blade; rustywind is scoped to `resources/js` for Solid/JSX components. The two order classes differently, so never point rustywind at `resources/views`.
+- **Never nest a multi-line `@php ... @endphp` block inside a Blade directive** (`@foreach`, `@if`, ...). blade-formatter mis-indents it and mangles the PHP. Hoist the logic into the single `@php` block at the top of the template instead (see `resources/views/components/partials/head.blade.php`).
+- **Blade is the only place classes are sorted.** There is no second sorter and no JS to sort - never add one that orders classes differently from blade-formatter.
 - **blade-formatter does not know the theme.** Its class sorter (`@shufo/tailwindcss-class-sorter`) loads `tailwindcssConfigPath` as JavaScript through jiti, so it cannot read a v4 `@theme` stylesheet - pointing it at `resources/css/app.css` throws `SyntaxError: Invalid or unexpected token`. The option is therefore unset, and `brand-*` / `font-display` sort as unknown classes (hoisted to the front). The order is still deterministic, so `format:check` stays green. Re-add the option only if blade-formatter gains a v4 stylesheet entry point; never reintroduce a `tailwind.config.js` just to feed the sorter, which would put the theme's names in two places.
 
 ## 2. Code Style & Conventions
@@ -127,30 +135,26 @@ Two rules keep this stable — break either one and `format:check` starts failin
 - **JSON Format:** All translation columns use JSON format: `{"en":"English text","ro":"Text românesc"}`.
 - **Non-nullable:** Translation columns are NOT nullable - translations for supported languages are mandatory.
 - **Validation Required:** When working with translated content, always verify both language keys exist before saving.
-- **Translatable models:** Use `Spatie\Translatable\HasTranslations` (see `Role`, `ErrorPage` for reference).
+- **Translatable models:** Use `Spatie\Translatable\HasTranslations` (see `ErrorPage` for reference).
 
-## 3. Branding System
+## 3. Brand Tokens
 
-The boilerplate has a **centralized, config-driven branding system**. This is the single source of truth for brand identity.
+One brand, declared once. `resources/css/app.css` holds a `:root` block with the
+`--brand-*` colors and the two font families; the `@theme` block right below maps
+them onto Tailwind utilities (`bg-brand-primary`, `text-brand-text-secondary`,
+`font-display`, ...). Tailwind v4 is CSS-first: there is no `tailwind.config.js`,
+and adding one would split the theme across two files.
 
-### Configuration (`config/branding.php`)
-All brand values are declared here:
-- `name` - brand name (falls back to `lang/*/brand.php`)
-- `colors` - semantic palette (primary, secondary, accent, background, surface, text, border, success, warning, danger)
-- `typography` - heading/body font families, weights, Google Fonts toggle
-- `assets` - logo, favicon, icon paths
+Three places repeat a brand value, and they must stay in step:
 
-Environment overrides are supported (`BRAND_NAME`, `BRAND_COLOR_PRIMARY`, `BRAND_FONT_HEADING`, etc.).
+- `resources/css/app.css` - the palette itself.
+- `App\Providers\Filament\AdminPanelProvider` - Filament parses `primary/success/warning/danger` through `Color::hex()`, so the panel cannot read the stylesheet.
+- `resources/views/components/partials/head.blade.php` - the Google Fonts link (Oswald + Barlow), the favicon and `theme-color`.
 
-### How it flows
-1. `config/branding.php` declares the brand.
-2. `App\Services\BrandingService` exposes it (`name()`, `colors()`, `color()`, `get()`, `assetUrl()`).
-3. `resources/views/components/partials/branding-styles.blade.php` emits `--brand-*` / `--brand-font-heading` / `--brand-font-body` CSS custom properties (snake_case keys become dash-case properties).
-4. The `@theme` block in `resources/css/app.css` maps `brand-*` utilities (`bg-brand-primary`, `text-brand-text-secondary`, ...) and font families to those CSS variables. Tailwind v4 is CSS-first: there is no `tailwind.config.js`, and adding one would split the theme across two files.
-5. The Filament admin panel derives its `primary/danger/success/warning` colors from the same service.
+The name lives in `lang/{en,ro}/brand.php`, read with `__('brand.name')`.
 
 ### Which files Tailwind scans
-`resources/css/app.css` imports Tailwind with `source(none)` and then lists every scanned path as an explicit `@source`. Automatic file detection stays off deliberately — one list, one place.
+`resources/css/app.css` imports Tailwind with `source(none)` and then names the one scanned path explicitly: `resources/views`. Automatic file detection stays off deliberately — one list, one place. The Filament panel loads its own compiled stylesheet, never `app.css`, so nothing under `app/Filament` is worth scanning.
 
 When a new directory needs scanning, add an `@source` line in `app.css`. Two rules:
 
@@ -170,23 +174,17 @@ php artisan test && npm run build         # same hash expected
 </div>
 
 <x-brand.button variant="primary">Click</x-brand.button>
-<x-brand.card>...</x-brand.card>
-<x-brand.name />
 ```
 
-Never hardcode hex colors or one-off font families in views or CSS — use the brand utilities or CSS variables.
-
-### After changing branding config
-```bash
-npm run build   # rebuild Tailwind output (colors themselves are read at request time)
-```
-Run `php artisan config:clear` as well if you have cached config with `config:cache`.
+Never hardcode hex colors or one-off font families in views — use the brand
+utilities. The palette itself is edited in `app.css`, which means `npm run build`
+after every change.
 
 ## 4. Filament v4 Specifics
 
 - **Single panel:** One admin panel at `/admin` (`App\Providers\Filament\AdminPanelProvider`), guard `admin`, model `App\Models\AdminUser`.
-- **Resources shipped:** Users (with role assignment), Roles, Error Pages.
-- **Base pages:** Create/Edit pages extend `App\Filament\Admin\Pages\BaseCreateRecord` / `BaseEditRecord` (redirect to index after save).
+- **Resources shipped:** Error Pages - the only editable content on the site. There is no users or roles resource: the panel exists to edit the 404/500 copy, and admin accounts are created by `FilamentAdminUserSeeder` or by hand.
+- **Base pages:** none. `EditErrorPage` declares its own `getRedirectUrl()`; add a shared base only once a second resource wants the same behaviour.
 - **Validation:** `unique()` rules now default to `ignoreRecord: true`.
 - **Imports:** Put Filament namespaces in `use` sections. Do not use full paths inline.
 - **Utilities:** Form utilities like `Get` and `Set` are in `Filament\Schemas\Components\Utilities`.
@@ -195,11 +193,26 @@ Run `php artisan config:clear` as well if you have cached config with `config:ca
 - **Enums:** Implement `HasLabel`, `HasColor`, `HasIcon` interfaces on Enums for Filament integration.
 - **CRITICAL - Navigation i18n:** ALL Filament admin panel navigation items MUST be internationalized. When adding any new Resource, always implement `getNavigationLabel()` using translation keys from `admin.navigation`. Never use hardcoded navigation labels.
 - **CRITICAL - Table Column Toggleability:** In every Filament table, columns must be user-toggleable via `->toggleable()`. Keep intentional hidden-by-default behavior with `->toggleable(isToggledHiddenByDefault: true)`.
-- **Resource structure:** Schemas in `Schemas/`, tables in `Tables/`, pages in `Pages/` (see `Users`, `Roles`, `ErrorPages` resources for reference).
+- **Resource structure:** Schemas in `Schemas/`, tables in `Tables/`, pages in `Pages/` (see the `ErrorPages` resource for reference).
 - **Do not generate View pages or Infolists** unless explicitly requested.
-- **Vendor assets stay unpublished:** `public/css/filament`, `public/js`, `public/fonts` and `lang/vendor` are gitignored on purpose - they're Filament's own package assets/translations, regenerated automatically by `filament:upgrade` on every `composer install`/`update` (see `composer.json`'s `post-autoload-dump`). Never commit them or run `vendor:publish` for Filament's translations/assets in this boilerplate; publishing that is a call each downstream project should make for itself, not something to bake in. `public/css/filament-admin.css` is our own file and stays tracked.
+- **Vendor assets stay unpublished:** `public/css/filament`, `public/js`, `public/fonts` and `lang/vendor` are gitignored on purpose - they're Filament's own package assets/translations, regenerated automatically by `filament:upgrade` on every `composer install`/`update` (see `composer.json`'s `post-autoload-dump`). Never commit them or run `vendor:publish` for Filament's translations/assets; publishing that is a call each project should make for itself. The panel carries no stylesheet of its own - it wears Filament's defaults plus the four `->colors()` hex values.
 
-## 5. Database
+## 5. Configuration Files
+
+`config/` holds **only the keys this application overrides**. Laravel 12 merges
+`vendor/laravel/framework/config/*.php` underneath (top level, plus a second
+pass for `auth.guards`/`providers`, `cache.stores`, `database.connections`,
+`filesystems.disks`, `logging.channels`, `mail.mailers` and `queue.connections`),
+so a stock copy in `config/` buys nothing and silently goes stale - the copy this
+repo used to carry still had Monolog's pre-rename `with` key and was missing the
+Redis backoff options.
+
+`config/logging.php`, `mail.php`, `queue.php` and `services.php` therefore do not
+exist at all. When you need to change a framework default, add just that key.
+Verify a config change by dumping `config()->all()` before and after and diffing
+- nothing should be lost or altered but the key you meant to change.
+
+## 6. Database
 
 - **CRITICAL:** This project is **PostgreSQL-only** in all environments (production, local, CI, and tests).
 - **Raw SQL:** PostgreSQL-native SQL is allowed and expected when needed for correctness or performance.
@@ -211,15 +224,14 @@ Run `php artisan config:clear` as well if you have cached config with `config:ca
 All seeders are **idempotent** (`updateOrCreate` / `firstOrCreate`). The `DatabaseSeeder` controls what runs per environment:
 
 Core reference data (ALL environments, production included):
-- `RoleSeeder` - one role per `App\Enums\RoleSlug` case (runs first: users reference roles)
 - `ErrorPageSeeder` - error page content (404/500)
 
 Non-production only:
-- `FilamentAdminUserSeeder` - default admin user (credentials from `FILAMENT_DEFAULT_*` env vars), assigned the `admin` role
+- `FilamentAdminUserSeeder` - default admin user (credentials from `FILAMENT_DEFAULT_*` env vars)
 
 When adding new seeders: make them idempotent, add to `DatabaseSeeder.php`, and default to the non-production section unless it is core content required in production.
 
-## 6. Testing Guidelines
+## 7. Testing Guidelines
 - **Framework:** Use **Pest**.
 - **Database Isolation:** Tests run against a dedicated `boilerplate_test` PostgreSQL database, which must exist before the first run. `RefreshDatabase` is applied globally in `tests/Pest.php`.
 - **Structure:** Follow **Arrange-Act-Assert**.
@@ -230,20 +242,20 @@ When adding new seeders: make them idempotent, add to `DatabaseSeeder.php`, and 
   Livewire::test(\App\Filament\Admin\Resources\Xxx\Pages\EditXxx::class, ['record' => $record->id])->assertStatus(200);
   ```
 - **Environment File:** none required. Every variable the suite needs is declared in `phpunit.xml`'s `<php>` block, so a fresh clone can run the tests immediately. A local `.env.testing` is optional (and gitignored) - add one only to override those values on your own machine.
+- **Error page copy lives in the database.** `lang/*/errors.php` holds only the `<title>` and the button label; the heading and the message come from the `error_pages` rows, which is what the admin panel edits. Do not add a lang-file copy of them back as a "fallback" - that is two sources for one sentence.
 
-## 7. Included Infrastructure
+## 8. Included Infrastructure
 
-- **Roles:** `roles` table + `RoleSlug` enum; `users.role_id` is a nullable FK (`nullOnDelete`). Use `$user->hasRole(RoleSlug::Admin)`; add new roles as enum cases **and** in `RoleSeeder`.
-- **S3 uploads:** `league/flysystem-aws-s3-v3` plus the `upload_url()` helper, which resolves a stored path against `config('filesystems.default')` (set it with `FILESYSTEM_DISK`). Filament's own `FileUpload` field covers upload forms - reach for it directly rather than writing a wrapper.
+- **Admin accounts:** every row in `users` may sign in at `/admin` - there are no roles or permissions. Add one with `FilamentAdminUserSeeder` or `AdminUser::create()`; if the site ever needs a second class of editor, that is the point to reintroduce a role, not before.
+- **S3 uploads:** `league/flysystem-aws-s3-v3` plus the `upload_url()` helper, which resolves a stored path against `config('filesystems.default')` (set it with `FILESYSTEM_DISK`). Nothing calls it today - the site's images are static files in `public/`.
 - **Locale switch:** `bezhansalleh/filament-language-switch` inside the admin panel.
 - **Error pages:** DB-editable 404/500 content (`error_pages` table + `ErrorPages` Filament resource), rendered via exception handler in `bootstrap/app.php`.
-- **CSRF auto-refresh:** Livewire 419 recovery hook (`resources/js/livewire-csrf-refresh.js` + handler in `bootstrap/app.php`).
-- **Solid.js bridge:** `resources/js/app.jsx` lazily mounts JSX components registered in the `JSX` map for elements carrying `solid-component` / `solid-props` attributes.
+- **CSRF auto-refresh:** Livewire 419 recovery hook (`resources/js/livewire-csrf-refresh.js` + handler in `bootstrap/app.php`), loaded by the Filament panel only. The public pages hold no state and issue no Livewire XHR, so they do not need it.
 - **Docker:** `Dockerfile` (PHP-FPM + nginx + Node; builds assets, caches config and runs `migrate --force` on start) and `docker-compose.yml` with an `app` and a `queue` service. There is no PostgreSQL container - `DB_*` must point at a database you provide.
 - **Makefile:** shortcuts for the dev loop (`dev`, `test`, `format`, `migrate`, `analyse`) plus `db-backup` / `db-restore`, which shell out to `pg_dump` / `psql` using the `DB_*` environment variables.
 - **AI-agent tooling:** `.ai/` is the source of truth for AI-agent tooling (plugins now, commands/skills/agents/rules if added later); `.claude/` only holds `settings.json` plus symlinks into `.ai/` (see `.ai/README.md`). Ships the [ponytail](https://github.com/DietrichGebert/ponytail), [mattpocock/skills](https://github.com/mattpocock/skills), and [caveman](https://github.com/JuliusBrussee/caveman) Claude Code plugins as git submodules under `.ai/plugins/` — run `git submodule update --init` after cloning, and ensure `node` is on `PATH` for ponytail's and caveman's hooks. They only activate once you accept Claude Code's workspace-trust prompt.
 
-## 8. The Public Site
+## 9. The Public Site
 
 Four pages, no database: everything the visitor reads comes from `lang/` and `config/`.
 
@@ -273,7 +285,7 @@ Rules that keep this maintainable:
 4. `npm run build`, then `php artisan serve`.
 5. Change `FILAMENT_DEFAULT_ADMIN_*` values before the first seed; log in at `/admin` to edit the 404/500 pages.
 
-Brand colors, fonts and icons are declared in `config/branding.php`. Favicons and the hero image are static files in `public/` and resolve without `storage:link`; only genuine uploads go through `upload_url()`.
+Brand colors and fonts are declared in `resources/css/app.css` (see section 3). The favicon and the hero image are static files in `public/` and resolve without `storage:link`.
 
 
 ===

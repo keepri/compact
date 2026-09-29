@@ -24,24 +24,9 @@ class ErrorPageResource extends Resource
 
     protected static ?int $navigationSort = 100;
 
-    public static function getNavigationGroup(): string
-    {
-        return __('admin.navigation_groups.content');
-    }
-
     public static function getNavigationLabel(): string
     {
         return __('admin.navigation.error_pages');
-    }
-
-    public static function getModelLabel(): string
-    {
-        return __('admin.models.error_page');
-    }
-
-    public static function getPluralModelLabel(): string
-    {
-        return __('admin.models.error_pages');
     }
 
     #[Override]

@@ -39,3 +39,6 @@ _ide_helper_models.php
 
 # Source React site, kept only until the Blade port is verified
 /react
+
+# dev
+/k

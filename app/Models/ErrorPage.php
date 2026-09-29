@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\SupportedLocale;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Config;
 use Spatie\Translatable\HasTranslations;
 
 /**
@@ -53,49 +51,4 @@ class ErrorPage extends Model
         'heading' => 'array',
         'message' => 'array',
     ];
-
-    /**
-     * Get an error page by its slug.
-     */
-    public static function getBySlug(string $slug): ?self
-    {
-        return cache()->remember(
-            self::cacheKey($slug, app()->getLocale()),
-            Config::integer('cache.ttl'),
-            fn() => self::query()->where('slug', $slug)->first(),
-        );
-    }
-
-    /**
-     * Get the 404 not found page content.
-     */
-    public static function get404Page(): ?self
-    {
-        return self::getBySlug('not_found');
-    }
-
-    /**
-     * Get the 500 server error page content.
-     */
-    public static function get500Page(): ?self
-    {
-        return self::getBySlug('error');
-    }
-
-    protected static function booted(): void
-    {
-        $forget = static function (self $page): void {
-            foreach (SupportedLocale::cases() as $locale) {
-                cache()->forget(self::cacheKey($page->slug, $locale->value));
-            }
-        };
-
-        static::saved($forget);
-        static::deleted($forget);
-    }
-
-    private static function cacheKey(string $slug, string $locale): string
-    {
-        return "error:page_content:{$locale}:{$slug}";
-    }
 }

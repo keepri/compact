@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\RoleSlug;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Override;
 
 /**
  * @property int $id
@@ -22,10 +19,8 @@ use Override;
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property int|null $role_id
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read Role|null $role
  * @method static \Database\Factories\AdminUserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminUser newQuery()
@@ -37,7 +32,6 @@ use Override;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminUser whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminUser wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminUser whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminUser whereRoleId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminUser whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -66,7 +60,7 @@ class AdminUser extends Authenticatable implements FilamentUser
      *
      * @var list<string>
      */
-    protected $fillable = ['name', 'email', 'password', 'role_id'];
+    protected $fillable = ['name', 'email', 'password'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -76,36 +70,11 @@ class AdminUser extends Authenticatable implements FilamentUser
     protected $hidden = ['password', 'remember_token'];
 
     /**
-     * @return BelongsTo<Role, $this>
-     */
-    public function role(): BelongsTo
-    {
-        return $this->belongsTo(Role::class);
-    }
-
-    public function hasRole(RoleSlug $slug): bool
-    {
-        return $this->role?->slug === $slug->value;
-    }
-
-    /**
      * Determine if the user can access the Filament admin panel.
      */
     public function canAccessPanel(Panel $panel): bool
     {
         return $panel->getId() === 'admin';
-    }
-
-    #[Override]
-    protected static function boot(): void
-    {
-        parent::boot();
-
-        static::creating(function ($user): void {
-            if ($user->email_verified_at === null) {
-                $user->email_verified_at = now();
-            }
-        });
     }
 
     /**

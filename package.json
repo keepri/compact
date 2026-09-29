@@ -1,6 +1,6 @@
 {
     "name": "laravel-filament-boilerplate",
-    "description": "Laravel 12 boilerplate with Filament v4, Livewire 3, Tailwind CSS v4 and a centralized branding system.",
+    "description": "The website of Compact, built on Laravel 12, Filament v4, Livewire 3 and Tailwind CSS v4.",
     "private": true,
     "type": "module",
     "scripts": {
@@ -8,17 +8,15 @@
         "dev": "vite",
         "clean": "rm -fr node_modules vendor",
         "clean-install": "npm run clean && npm i & composer i",
-        "format": "blade-formatter \"./resources/**/*.blade.php\" -w && rustywind --write resources/js",
-        "format:check": "blade-formatter \"./resources/**/*.blade.php\" --check-formatted --diff && rustywind --check-formatted resources/js"
+        "format": "blade-formatter \"./resources/**/*.blade.php\" -w",
+        "format:check": "blade-formatter \"./resources/**/*.blade.php\" --check-formatted --diff"
     },
     "dependencies": {
         "@tailwindcss/vite": "^4.3.0",
         "concurrently": "^9.2.1",
         "laravel-vite-plugin": "^2.1.0",
-        "solid-js": "^1.9.13",
         "tailwindcss": "^4.3.0",
-        "vite": "^7.3.5",
-        "vite-plugin-solid": "^2.11.12"
+        "vite": "^7.3.5"
     },
     "optionalDependencies": {
         "@rollup/rollup-linux-x64-gnu": "4.9.5",
@@ -26,7 +24,6 @@
         "lightningcss-linux-x64-gnu": "^1.32.0"
     },
     "devDependencies": {
-        "blade-formatter": "^1.44.4",
-        "rustywind": "^0.24.3"
+        "blade-formatter": "^1.44.4"
     }
 }

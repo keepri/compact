@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Enums\SupportedLocale;
+use App\Http\Controllers\SeoController;
 use App\Livewire\Pages\Band as BandPage;
 use App\Livewire\Pages\Concert as ConcertPage;
 use App\Livewire\Pages\Contact as ContactPage;
@@ -16,6 +17,9 @@ Route::get('/', HomePage::class)->name('home');
 Route::get('/concert', ConcertPage::class)->name('concert');
 Route::get('/formatia', BandPage::class)->name('band');
 Route::get('/contact', ContactPage::class)->name('contact');
+
+Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
 
 Route::get('/lang/{locale}', function (string $locale): RedirectResponse {
     $supportedLocale = SupportedLocale::tryFrom($locale);

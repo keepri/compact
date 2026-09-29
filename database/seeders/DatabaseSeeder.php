@@ -15,7 +15,6 @@ class DatabaseSeeder extends Seeder
     {
         // Core reference data - runs in ALL environments including production
         $this->call([
-            RoleSeeder::class,
             ErrorPageSeeder::class,
         ]);
 

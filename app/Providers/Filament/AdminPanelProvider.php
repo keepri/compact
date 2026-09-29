@@ -4,18 +4,13 @@ declare(strict_types=1);
 
 namespace App\Providers\Filament;
 
-use App\Services\BrandingService;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Navigation\NavigationGroup;
-use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -29,8 +24,6 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        $branding = resolve(BrandingService::class);
-
         return $panel
             ->default()
             ->id('admin')
@@ -38,33 +31,21 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->authGuard('admin')
             ->databaseTransactions()
-            ->brandLogo(fn(): Factory|View => view('components.brand.admin-logo'))
-            ->favicon(fn() => $branding->assetUrl('favicon_svg') ?? $branding->assetUrl('favicon'))
-            ->colors($this->getBrandColors($branding))
-            ->renderHook(
-                'panels::styles.after',
-                fn(): Factory|View => view('filament.components.admin-styles'),
-            )
+            ->brandName(fn(): string => __('brand.name'))
+            ->favicon(fn(): string => asset('favicon.ico'))
+            // Filament cannot read the stylesheet, so the palette declared in
+            // resources/css/app.css is repeated here as hex - keep the two in step.
+            ->colors([
+                'primary' => Color::hex('#EFC200'),
+                'success' => Color::hex('#2F8F4E'),
+                'warning' => Color::hex('#D39E2A'),
+                'danger' => Color::hex('#BE2323'),
+            ])
             ->renderHook(
                 'panels::scripts.after',
                 fn(): Factory|View => view('filament.components.livewire-csrf-refresh'),
             )
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\Filament\Admin\Resources')
-            ->navigationGroups([
-                NavigationGroup::make()
-                    ->label(fn(): string => __('admin.navigation_groups.content')),
-                NavigationGroup::make()
-                    ->label(fn(): string => __('admin.navigation_groups.system')),
-            ])
-            ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\Filament\Admin\Pages')
-            ->pages([
-                Dashboard::class,
-            ])
-            ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')
-            ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
-            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -79,22 +60,5 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
-    }
-
-    /**
-     * Get brand colors for the Filament panel.
-     *
-     * @return array<string, array<int|string, int|string>>
-     */
-    private function getBrandColors(BrandingService $branding): array
-    {
-        $colors = $branding->colors();
-
-        return [
-            'primary' => Color::hex($colors['primary'] ?? '#000000'),
-            'success' => Color::hex($colors['success'] ?? '#16a34a'),
-            'warning' => Color::hex($colors['warning'] ?? '#ca8a04'),
-            'danger' => Color::hex($colors['danger'] ?? '#dc2626'),
-        ];
     }
 }

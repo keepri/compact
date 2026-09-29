@@ -11,16 +11,16 @@
     <x-site.page-header :eyebrow="__('contact.header.eyebrow')" :title="__('contact.header.title')" :intro="__('contact.header.intro')" />
 
     <x-site.section :eyebrow="__('contact.addresses.eyebrow')" :title="__('contact.addresses.title')">
-        <x-site.fact-grid :cols="3">
+        <div class="grid gap-16 md:grid-cols-3 md:gap-20">
             @foreach ($addresses as $label => $email)
-                <x-site.fact-cell wire:key="address-{{ $loop->index }}">
+                <div wire:key="address-{{ $loop->index }}"
+                    class="@if ($loop->iteration === 2) offset-card-rust @else offset-card @endif p-8">
                     <p class="eyebrow">{{ $label }}</p>
-                    <p class="font-display mt-3 uppercase">
-                        <a href="mailto:{{ $email }}"
-                            class="hover:text-brand-primary transition-colors">{{ $email }}</a>
-                    </p>
-                </x-site.fact-cell>
+                    <a href="mailto:{{ $email }}"
+                        class="font-display hover:text-brand-primary mt-3 block break-all text-lg uppercase">
+                        {{ $email }}</a>
+                </div>
             @endforeach
-        </x-site.fact-grid>
+        </div>
     </x-site.section>
 </div>

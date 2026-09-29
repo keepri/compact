@@ -2,7 +2,7 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "boilerplate/laravel-filament",
     "type": "project",
-    "description": "Laravel 12 boilerplate with Filament v4, Livewire 3, Tailwind CSS v4 and a centralized branding system.",
+    "description": "The website of Compact, built on Laravel 12, Filament v4, Livewire 3 and Tailwind CSS v4.",
     "keywords": ["laravel", "framework", "boilerplate"],
     "license": "MIT",
     "require": {

@@ -13,7 +13,7 @@ return [
     'header' => [
         'eyebrow' => 'Componență',
         'title' => 'Formația',
-        'intro' => 'Cinci decenii de muzică, o singură constantă: rock-ul. De la formula fondatoare din 1976 până la componența aniversară de astăzi.',
+        'intro' => 'Cinci decenii de muzică, o singură constantă: rock-ul. De la formula fondatoare din 1976 până la componența aniversară de astăzi. Peste 6.000 de concerte, peste 350.000 de spectatori din 2023 încoace.',
     ],
 
     'lineup' => [
@@ -21,25 +21,36 @@ return [
         'title' => 'Formula aniversară',
     ],
 
+    'in_memoriam' => [
+        'eyebrow' => '2026',
+        'title' => 'In memoriam',
+        'text' => 'În drumul nostru, am pierdut colegi, prieteni, camarazi cu crezul în libertate, în muzica rock.',
+        'names' => 'Teo, Emil, Leo și Lelu',
+    ],
+
     'members' => [
         'costi-camarasan' => ['role' => 'Chitară · Voce', 'note' => 'Membru fondator, 1976'],
         'adrian-ordean' => ['role' => 'Chitară', 'note' => null],
         'adrian-marias' => ['role' => 'Voce', 'note' => null],
-        'robert-risteiu' => ['role' => 'Tobe', 'note' => null],
+        'robert-risteiu' => ['role' => 'Tobe · Audio/Video live', 'note' => null],
         'marius-macavei' => ['role' => 'Bas', 'note' => null],
-        'wily-gorgan' => ['role' => 'Claviaturi', 'note' => null],
+        'willy-gorgan' => ['role' => 'Claviaturi', 'note' => null],
     ],
 
     'timeline' => [
         'eyebrow' => '1976 – 2026',
         'title' => 'Cronologia formulelor',
+        'founders_label' => 'Fondatori:',
         'lineup_label' => 'Formula:',
+        'discography_label' => 'Albume:',
+        'awards_label' => 'Premii:',
+        'international_label' => 'Evenimente:',
     ],
 
     'eras' => [
         '1976-1979' => [
             'title' => 'Începuturile la Cluj-Napoca',
-            'description' => 'Compact se naște la Cluj-Napoca în 1976. Un an mai târziu li se alătură solistul Pascal Goelot, student din Congo, iar spre finalul deceniului formula trece prin primele schimbări, cu Marian Manoliu la chitară.',
+            'description' => 'Compact se naște la Cluj-Napoca în 1976, la Clubul Universității Babeș-Bolyai, fondată de Costi Cămărășan, Teo Peter, Marius Luca și Cornel Moldovan. Un an mai târziu li se alătură solistul Pascal Goelot, student din Congo, iar spre finalul deceniului formula trece prin primele schimbări, cu Marian Manoliu la chitară.',
         ],
         '1980-1981' => [
             'title' => 'Schimbări și o primă despărțire',
@@ -75,7 +86,7 @@ return [
         ],
         '2026' => [
             'title' => 'Astăzi — 50 de ani',
-            'description' => 'La jumătate de secol de la înființare, Compact urcă pe scenă în formula aniversară.',
+            'description' => 'La jumătate de secol de la înființare, Compact urcă pe scenă în formula aniversară. Albumele de studio din portofoliul formației conțin melodiile de suflet care au adus bucurie, iubire și speranță celor foarte mulți care au fost alături de ei 50 de ani.',
         ],
     ],
 ];

@@ -1,125 +1,205 @@
-/* `source(none)` disables Tailwind's automatic file detection: every scanned
-   path is listed explicitly below, so the build depends only on files we name.
-   Never point a @source at generated output (storage/framework/views holds
-   Blade's compiled-template cache) - the CSS would then vary with runtime state. */
 @import "tailwindcss" source(none);
 
-@custom-variant dark (&:where(.dark, .dark *));
+@source "../views";
 
-@source '../views';
-@source '../js';
-@source '../../app/Filament';
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+:root {
+    --brand-primary: #efc200;
+    --brand-secondary: #1b1b1b;
+    --brand-accent: #efc200;
+    --brand-background: #141414;
+    --brand-surface: #252525;
+    --brand-text: #f3f2ee;
+    --brand-text-secondary: #9f9a90;
+    --brand-border: #363636;
+    --brand-rust: #ad583f;
+    --brand-rust-foreground: #f5f3ed;
 
-/* Theme mapping for the boilerplate.
-   The `brand-*` utilities and font families resolve to the `--brand-*` custom
-   properties emitted by components/partials/branding-styles.blade.php, which
-   reads its values from config/branding.php. Scanned paths are the @source
-   lines above - this block only maps the theme. */
+    --brand-font-heading: "Archivo Black";
+    --brand-font-body: "Hind";
+}
+
 @theme {
-  --color-brand-primary: var(--brand-primary);
-  --color-brand-primary-hover: var(--brand-primary-hover);
-  --color-brand-secondary: var(--brand-secondary);
-  --color-brand-accent: var(--brand-accent);
-  --color-brand-background: var(--brand-background);
-  --color-brand-surface: var(--brand-surface);
-  --color-brand-surface-hover: var(--brand-surface-hover);
-  --color-brand-text: var(--brand-text);
-  --color-brand-text-secondary: var(--brand-text-secondary);
-  --color-brand-text-tertiary: var(--brand-text-tertiary);
-  --color-brand-border: var(--brand-border);
-  --color-brand-success: var(--brand-success);
-  --color-brand-warning: var(--brand-warning);
-  --color-brand-danger: var(--brand-danger);
+    --color-brand-primary: var(--brand-primary);
+    --color-brand-secondary: var(--brand-secondary);
+    --color-brand-accent: var(--brand-accent);
+    --color-brand-background: var(--brand-background);
+    --color-brand-surface: var(--brand-surface);
+    --color-brand-text: var(--brand-text);
+    --color-brand-text-secondary: var(--brand-text-secondary);
+    --color-brand-border: var(--brand-border);
+    --color-brand-rust: var(--brand-rust);
+    --color-brand-rust-foreground: var(--brand-rust-foreground);
 
-  --font-display: var(--brand-font-heading), sans-serif;
-  --font-sans: var(--brand-font-body), sans-serif;
+    --font-display: var(--brand-font-heading), sans-serif;
+    --font-sans: var(--brand-font-body), sans-serif;
 
-  /* Sizes keep Tailwind's defaults; only the line heights are overridden.
-     3xl and up are deliberately left alone: they are display sizes and need
-     Tailwind's tight leading, not the 1.5 that suits body copy. */
-  --text-xs--line-height: 1.5;
-  --text-sm--line-height: 1.5;
-  --text-base--line-height: 1.5;
-  --text-lg--line-height: 1.5;
-  --text-xl--line-height: 1.5;
-  --text-2xl--line-height: 1.5;
+    --radius-sm: 0px;
+    --radius-md: 0px;
+    --radius-lg: 0px;
+    --radius-xl: 0px;
+    --radius-2xl: 0px;
+
+    --text-xs--line-height: 1.5;
+    --text-sm--line-height: 1.5;
+    --text-base--line-height: 1.5;
+    --text-lg--line-height: 1.5;
+    --text-xl--line-height: 1.5;
+    --text-2xl--line-height: 1.5;
 }
 
 @layer base {
-    html {
+    html,
+    body {
         background-color: var(--brand-background);
         color: var(--brand-text);
+        font-family: var(--brand-font-body), sans-serif;
+        font-size: 1.0625rem;
+        line-height: 1.6;
     }
 
-    /* Every heading in the design is uppercase display type. This is
-       load-bearing - remove it and every heading on the site changes. */
     h1,
     h2,
     h3,
     h4 {
         font-family: var(--brand-font-heading), sans-serif;
         text-transform: uppercase;
-        letter-spacing: 0.02em;
-        font-weight: 600;
+        letter-spacing: -0.01em;
+        line-height: 0.95;
+        font-weight: 400;
     }
 
-    /* Alpine strips this attribute once it boots; without the rule the mobile
-       drawer renders open until then. */
+    h1 {
+        font-size: 2.75rem;
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+
+    h3 {
+        font-size: 1.5rem;
+    }
+
+    h4 {
+        font-size: 1.25rem;
+    }
+
+    ::selection {
+        background: var(--brand-primary);
+        color: var(--brand-background);
+    }
+
     [x-cloak] {
         display: none !important;
     }
 }
 
-/* The small caps label that opens almost every block on the site. */
 @utility eyebrow {
-    font-family: var(--brand-font-heading), sans-serif;
+    font-family: var(--brand-font-body), sans-serif;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.32em;
-    font-size: 0.75rem;
+    letter-spacing: 0.28em;
+    font-size: 0.6875rem;
     color: var(--brand-primary);
 }
 
-/* The 1px rule under a section heading, fading out to the right. */
 @utility hairline {
-    height: 1px;
+    height: 2px;
     width: 100%;
-    background: linear-gradient(
-        to right,
-        var(--brand-primary),
-        color-mix(in oklch, var(--brand-primary) 15%, transparent),
-        transparent
+    background: var(--brand-primary);
+}
+
+@utility rule-thick {
+    border-top: 4px solid var(--brand-text);
+}
+
+@utility stripes {
+    background-image: repeating-linear-gradient(
+        -45deg,
+        var(--brand-primary) 0px,
+        var(--brand-primary) 6px,
+        transparent 6px,
+        transparent 14px
     );
 }
 
-/* Component-specific brand styles now use Tailwind classes with dynamic variables */
+@utility misprint {
+    position: relative;
+    text-shadow:
+        3px 0 0 color-mix(in oklch, var(--brand-rust) 70%, transparent),
+        -2px 2px 0 color-mix(in oklch, var(--brand-primary) 22%, transparent);
+}
+
+@utility offset-card {
+    position: relative;
+    background: var(--brand-surface);
+    border: 2px solid var(--brand-text);
+    box-shadow: 10px 10px 0 0 var(--brand-primary);
+}
+
+@utility offset-card-rust {
+    position: relative;
+    background: var(--brand-surface);
+    border: 2px solid var(--brand-text);
+    box-shadow: 10px 10px 0 0 var(--brand-rust);
+}
+
+@utility paper-grain {
+    position: relative;
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.5;
+        background-image: repeating-linear-gradient(
+            0deg,
+            color-mix(in oklch, black 22%, transparent) 0px,
+            color-mix(in oklch, black 22%, transparent) 1px,
+            transparent 1px,
+            transparent 3px
+        );
+        mix-blend-mode: multiply;
+    }
+}
+
+@utility mask-fade-left {
+    mask-image: linear-gradient(to right, transparent 0%, black 30%, black 100%);
+    -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        black 30%,
+        black 100%
+    );
+}
+
 @layer components {
-    /* Button Components */
     .btn-primary {
-        @apply bg-brand-primary text-brand-background inline-flex cursor-pointer items-center justify-center gap-2 px-5 py-3 text-center text-xs tracking-[0.2em] uppercase transition-opacity duration-150;
+        @apply inline-flex cursor-pointer items-center justify-center gap-2 border-2 border-brand-text bg-brand-primary px-5 py-3 text-center text-xs text-brand-background uppercase transition-colors;
         font-family: var(--brand-font-heading), sans-serif;
-        border: 1px solid var(--brand-primary);
+        letter-spacing: 0.12em;
     }
 
     .btn-primary:hover {
-        opacity: 0.9;
+        border-color: var(--brand-rust);
     }
 
     .btn-outline {
-        @apply text-brand-text inline-flex cursor-pointer items-center justify-center gap-2 bg-transparent px-5 py-3 text-center text-xs tracking-[0.2em] uppercase transition-colors duration-150;
+        @apply inline-flex cursor-pointer items-center justify-center gap-2 border-2 border-brand-text bg-brand-background/70 px-5 py-3 text-center text-xs text-brand-text uppercase backdrop-blur-sm transition-colors;
         font-family: var(--brand-font-heading), sans-serif;
-        border: 1px solid var(--brand-border);
+        letter-spacing: 0.12em;
     }
 
     .btn-outline:hover {
-        border-color: var(--brand-primary);
-        color: var(--brand-primary);
+        background-color: var(--brand-text);
+        color: var(--brand-background);
     }
 
     .btn-primary:disabled,
     .btn-outline:disabled,
-    .btn-primary[aria-disabled='true'],
-    .btn-outline[aria-disabled='true'] {
+    .btn-primary[aria-disabled="true"],
+    .btn-outline[aria-disabled="true"] {
         @apply cursor-not-allowed;
         opacity: 0.55;
         filter: saturate(0.75);
@@ -127,35 +207,7 @@
         box-shadow: none;
     }
 
-    .btn-primary:disabled:hover,
-    .btn-outline:disabled:hover,
-    .btn-primary[aria-disabled='true']:hover,
-    .btn-outline[aria-disabled='true']:hover {
-        background-color: inherit;
-        color: inherit;
-        border-color: inherit;
-    }
-
-    .btn-sm {
-        @apply py-1.5 px-3 text-sm;
-    }
-
     .btn-lg {
         @apply px-8 py-3 text-sm;
-    }
-
-    /* Typography */
-    .heading-page {
-        @apply text-4xl font-bold;
-        font-family: var(--brand-font-heading);
-    }
-
-    /* Link Components */
-    .link-brand {
-        @apply text-brand-primary font-medium transition duration-200 hover:text-brand-primary-hover;
-    }
-
-    .link-underline {
-        @apply underline underline-offset-2 hover:underline-offset-4;
     }
 }

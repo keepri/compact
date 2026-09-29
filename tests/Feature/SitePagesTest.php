@@ -14,8 +14,19 @@ test('the home page shows the hero and links to the concert', function (): void 
     $response->assertOk()
         ->assertSee(__('home.hero.title_line1'))
         ->assertSee(__('home.hero.lead'))
-        ->assertSee(route('concert'));
+        ->assertSee(route('concert'))
+        ->assertSee(__('home.statement.line1'))
+        ->assertSee(__('home.about.cta'));
 });
+
+test('public pages expose the shared social image meta tags', function (string $path): void {
+    $metaImage = asset('images/compact-band-diagonal.webp');
+
+    $this->get($path)
+        ->assertOk()
+        ->assertSee('property="og:image" content="' . $metaImage . '"', false)
+        ->assertSee('name="twitter:image" content="' . $metaImage . '"', false);
+})->with(['/', '/concert', '/formatia', '/contact']);
 
 test('each page renders its own header title', function (string $path, string $key): void {
     $this->get($path)->assertOk()->assertSee(__("{$key}.header.title"));
@@ -48,7 +59,7 @@ test('the contact page shows every address as a mailto link', function (): void 
 test('pages render in romanian by default', function (): void {
     $this->get('/concert')
         ->assertOk()
-        ->assertSee('Detalii eveniment', false);
+        ->assertSee('50 de ani de rock și prietenie', false);
 });
 
 test('pages render in english once the locale is switched', function (): void {
@@ -56,8 +67,8 @@ test('pages render in english once the locale is switched', function (): void {
 
     $this->get('/concert')
         ->assertOk()
-        ->assertSee('Event details', false)
-        ->assertDontSee('Detalii eveniment', false);
+        ->assertSee('50 years of rock and friendship', false)
+        ->assertDontSee('50 de ani de rock și prietenie', false);
 });
 
 test('the footer offers the other locale', function (): void {
@@ -71,4 +82,8 @@ test('the header renders the mobile drawer', function (): void {
         ->assertOk()
         ->assertSee('x-data', false)
         ->assertSee('site-mobile-nav', false);
+});
+
+test('istorie route is not defined', function (): void {
+    $this->get('/istorie')->assertNotFound();
 });
