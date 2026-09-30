@@ -12,7 +12,7 @@ return [
 
     'header' => [
         'eyebrow' => 'Eveniment',
-        'title' => 'Concert 50 de ani de rock și prietenie',
+        'title' => 'Concert 50 de ani de' . "\u{a0}" . 'rock și prietenie',
         'intro' => 'Concert aniversar care marchează cinci decenii de rock românesc. O singură seară, o singură locație.',
         'image_alt' => 'Compact 50 — 50 de ani de rock și prietenie',
     ],

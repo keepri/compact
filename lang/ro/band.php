@@ -25,7 +25,7 @@ return [
         'eyebrow' => '2026',
         'title' => 'In memoriam',
         'text' => 'În drumul nostru, am pierdut colegi, prieteni, camarazi cu crezul în libertate, în muzica rock.',
-        'names' => 'Teo, Emil, Leo și Lelu',
+        'names' => 'Teo Peter, Emil, Leo Iorga și Lelu',
     ],
 
     'members' => [

@@ -20,7 +20,7 @@ test('the home page shows the hero and links to the concert', function (): void 
 });
 
 test('public pages expose the shared social image meta tags', function (string $path): void {
-    $metaImage = asset('images/compact-band-diagonal.webp');
+    $metaImage = asset('images/og-compact50.webp');
 
     $this->get($path)
         ->assertOk()

@@ -8,14 +8,19 @@
 
     <div class="mx-auto grid max-w-7xl gap-10 px-6 py-16 md:grid-cols-12">
         <div class="md:col-span-5">
-            <p class="font-display text-4xl uppercase">
+            <a href="{{ route('home') }}"
+                class="font-display inline-block text-4xl uppercase">
                 {{ __('brand.name') }}<span class="text-brand-primary">.</span>
-            </p>
+            </a>
             <p class="font-display mt-4 text-lg uppercase">
                 {{ __('site.footer.slogan') }}</p>
             <p class="text-brand-text-secondary mt-2 max-w-xs">
                 {{ __('site.footer.tagline') }}
             </p>
+            <x-brand.button :href="config('site.tickets.url')" variant="primary" target="_blank"
+                rel="noopener noreferrer" class="mt-6">
+                {{ __('home.hero.cta_secondary') }} →
+            </x-brand.button>
         </div>
 
         <div class="md:col-span-3">

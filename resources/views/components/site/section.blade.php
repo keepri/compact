@@ -1,6 +1,6 @@
 @props(['eyebrow' => null, 'title' => null])
 
-<section {{ $attributes->class(['mx-auto max-w-7xl px-6 py-20']) }}>
+<section {{ $attributes->class(['mx-auto max-w-7xl px-6 py-28']) }}>
     @if ($eyebrow || $title)
         <div
             class="border-brand-text mb-12 flex flex-wrap items-end justify-between gap-4 border-b-2 pb-4">

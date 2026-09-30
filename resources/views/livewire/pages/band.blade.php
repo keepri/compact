@@ -56,7 +56,7 @@
                     </div>
 
                     <div
-                        class="border-brand-text border-t-2 pt-5 md:col-span-9">
+                        class="border-brand-text @unless ($loop->first) border-t-2 @endunless pt-5 md:col-span-9">
                         <h3 class="text-xl md:text-2xl">
                             {{ $eraText[$era['slug']]['title'] ?? '' }}</h3>
 

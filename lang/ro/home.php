@@ -28,7 +28,7 @@ return [
         'date_label' => 'Data',
         'date_value' => '8 oct. 2026, 19:00',
         'location_label' => 'Locație',
-        'location_value' => 'Cinema Florin Piersic',
+        'location_value' => 'Cinema „Florin Piersic”',
         'city_label' => 'Oraș',
         'city_value' => 'Cluj-Napoca',
         'tickets_label' => 'Bilete',

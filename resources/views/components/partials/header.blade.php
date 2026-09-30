@@ -1,7 +1,7 @@
 <header x-data="{ open: false }"
     class="border-brand-text bg-brand-background sticky top-0 z-50 border-b-2">
     <div
-        class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4">
+        class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-6">
         <a href="{{ route('home') }}"
             class="font-display text-2xl uppercase leading-none tracking-tight">
             {{ __('brand.name') }}<span class="text-brand-primary">.</span>

@@ -151,6 +151,7 @@ return [
         [
             'slug' => '2026',
             'years' => '2026',
+            'photo' => 'timeline/2026.webp',
             'lineup' => ['Costi Cămărășan', 'Adrian Ordean', 'Adrian (GeaGea) Mariaș', 'Robert (Roby) Risteiu', 'Marius Macavei', 'Willy Gorgan'],
             'stats' => [
                 'concerts' => 6000,

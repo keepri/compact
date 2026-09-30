@@ -25,7 +25,7 @@ return [
         'eyebrow' => '2026',
         'title' => 'In memoriam',
         'text' => 'Along the way, we lost colleagues, friends and comrades who believed in freedom and rock music.',
-        'names' => 'Teo, Emil, Leo and Lelu',
+        'names' => 'Teo Peter, Emil, Leo Iorga and Lelu',
     ],
 
     'members' => [
