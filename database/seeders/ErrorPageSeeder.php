@@ -15,7 +15,7 @@ class ErrorPageSeeder extends Seeder
     public function run(): void
     {
         // 404 Not Found Page
-        ErrorPage::query()->updateOrCreate(
+        ErrorPage::query()->firstOrCreate(
             ['slug' => 'not_found'],
             [
                 'type' => '404',
@@ -31,7 +31,7 @@ class ErrorPageSeeder extends Seeder
         );
 
         // 500 Server Error Page
-        ErrorPage::query()->updateOrCreate(
+        ErrorPage::query()->firstOrCreate(
             ['slug' => 'error'],
             [
                 'type' => '500',

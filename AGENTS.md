@@ -214,26 +214,41 @@ Verify a config change by dumping `config()->all()` before and after and diffing
 
 ## 6. Database
 
-- **CRITICAL:** This project is **PostgreSQL-only** in all environments (production, local, CI, and tests).
-- **Raw SQL:** PostgreSQL-native SQL is allowed and expected when needed for correctness or performance.
-- **Migrations:** Write and validate migrations for PostgreSQL behavior. Use `foreignId()->constrained()`.
+- **CRITICAL:** This project is **MariaDB-only** in all environments (production, local, CI, and tests). Production is DirectAdmin hosting, which offers MariaDB and nothing else.
+- **Raw SQL:** avoid it; when it is unavoidable, write MariaDB SQL. `json` columns are `LONGTEXT` with a `JSON_VALID` check in MariaDB, so query them through Laravel's `->where('col->key', ...)` syntax rather than native JSON operators.
+- **Time zone:** the `mariadb` connection runs its session in UTC (`'timezone' => '+00:00'` in `config/database.php`), matching `APP_TIMEZONE=UTC`. Never remove it: in the server's local zone MariaDB rejects timestamps inside the hour the clocks skip in March and misreads the hour they repeat in October (`tests/Feature/DatabaseTimezoneTest.php` guards this). Laravel merges a connection as a whole, so that override spreads the framework's own `mariadb` definition and changes only this one key.
+- **Migrations:** Write and validate migrations for MariaDB behavior. Use `foreignId()->constrained()`.
 - **Production Safety:** All migrations must be backward compatible. Never introduce breaking changes (renaming/dropping columns without a transition plan, adding NOT NULL without defaults on existing tables). Use `php artisan migrate --pretend` to preview changes.
 - **New translatable columns:** use `->json('column')->nullable(false)` and ensure seeders populate all supported languages.
 
 ### Seeders
-All seeders are **idempotent** (`updateOrCreate` / `firstOrCreate`). The `DatabaseSeeder` controls what runs per environment:
+Every deploy runs `php artisan migrate --force --seed`. The seeders therefore run against live production data on every release, and the rules below are what make that safe.
 
-Core reference data (ALL environments, production included):
-- `ErrorPageSeeder` - error page content (404/500)
+**Rules:**
+- **Create-only.** Use `firstOrCreate`, never `updateOrCreate`, `update()`, `delete()` or `truncate()`. Anything a seeder overwrites is wiped on the next deploy - including every edit made in the admin panel. A seeder creates what is missing and leaves existing rows alone.
+- **Key on a stable natural identifier** (`slug`, `email`), never on an auto-increment `id`, so the "does it exist" lookup means the same thing in every database.
+- **Fill every supported locale** in translatable columns (see Database Translation Validation).
+- **Secrets come from config, never from the seeder.** Credentials are read through `config()` keys backed by env vars (as `FilamentAdminUserSeeder` reads `filament.default_admin_*`). The production `.env` must carry real values before the first deploy that runs a new seeder.
+- **Changing existing production data is a migration's job, not a seeder's.** If seeded copy has to change on a live site, write a migration (or do it in the admin panel) - never switch a seeder to `updateOrCreate` for one release.
 
-Non-production only:
-- `FilamentAdminUserSeeder` - default admin user (credentials from `FILAMENT_DEFAULT_*` env vars)
+**Which environment runs what.** `DatabaseSeeder` keeps two explicit lists, branched on `app()->isProduction()`:
 
-When adding new seeders: make them idempotent, add to `DatabaseSeeder.php`, and default to the non-production section unless it is core content required in production.
+| Seeder | Production | Every other environment | Creates |
+| --- | --- | --- | --- |
+| `ErrorPageSeeder` | yes | yes | 404 (`not_found`) and 500 (`error`) page copy, en + ro |
+| `FilamentAdminUserSeeder` | yes | yes | the admin account from `FILAMENT_DEFAULT_ADMIN_*` |
+
+Non-production environments run **all** seeders: the production list plus any local/demo data. The two lists are written out separately even while they are identical, so adding a local-only seeder never touches the production branch.
+
+**Adding a seeder:**
+1. Make it create-only, keyed on a natural identifier.
+2. Add it to the non-production list in `DatabaseSeeder`. Add it to the production list too only if production cannot work without the data - demo, sample and fixture data never goes there.
+3. Add it to the table above.
+4. Test it the way `tests/Feature/DatabaseSeederTest.php` and `ErrorPagesTest.php` do: seeding twice changes nothing that was edited in between, and - for a production seeder - `db:seed --force` under the `production` environment creates it.
 
 ## 7. Testing Guidelines
 - **Framework:** Use **Pest**.
-- **Database Isolation:** Tests run against a dedicated `boilerplate_test` PostgreSQL database, which must exist before the first run. `RefreshDatabase` is applied globally in `tests/Pest.php`.
+- **Database Isolation:** Tests run against a dedicated `compact_test` MariaDB database (user `compact`, password `compact`, host `localhost` - the same socket connection DirectAdmin gives its database users), which must exist before the first run. `RefreshDatabase` is applied globally in `tests/Pest.php`.
 - **Structure:** Follow **Arrange-Act-Assert**.
 - **Factories:** Use meaningful data in factories.
 - **Filament:** Always create smoke tests for new Filament Resources:
@@ -251,8 +266,8 @@ When adding new seeders: make them idempotent, add to `DatabaseSeeder.php`, and 
 - **Locale switch:** `bezhansalleh/filament-language-switch` inside the admin panel.
 - **Error pages:** DB-editable 404/500 content (`error_pages` table + `ErrorPages` Filament resource), rendered via exception handler in `bootstrap/app.php`.
 - **CSRF auto-refresh:** Livewire 419 recovery hook (`resources/js/livewire-csrf-refresh.js` + handler in `bootstrap/app.php`), loaded by the Filament panel only. The public pages hold no state and issue no Livewire XHR, so they do not need it.
-- **Docker:** `Dockerfile` (PHP-FPM + nginx + Node; builds assets, caches config and runs `migrate --force` on start) and `docker-compose.yml` with an `app` and a `queue` service. There is no PostgreSQL container - `DB_*` must point at a database you provide.
-- **Makefile:** shortcuts for the dev loop (`dev`, `test`, `format`, `migrate`, `analyse`) plus `db-backup` / `db-restore`, which shell out to `pg_dump` / `psql` using the `DB_*` environment variables.
+- **Docker:** `Dockerfile` (PHP-FPM + nginx + Node; builds assets, caches config and runs `migrate --force` on start) and `docker-compose.yml` with an `app` and a `queue` service. There is no MariaDB container - `DB_*` must point at a database you provide.
+- **Makefile:** shortcuts for the dev loop (`dev`, `test`, `format`, `migrate`, `analyse`) plus `db-backup` / `db-restore`, which shell out to `mariadb-dump` / `mariadb` using the `DB_*` environment variables.
 - **AI-agent tooling:** `.ai/` is the source of truth for AI-agent tooling (plugins now, commands/skills/agents/rules if added later); `.claude/` only holds `settings.json` plus symlinks into `.ai/` (see `.ai/README.md`). Ships the [ponytail](https://github.com/DietrichGebert/ponytail), [mattpocock/skills](https://github.com/mattpocock/skills), and [caveman](https://github.com/JuliusBrussee/caveman) Claude Code plugins as git submodules under `.ai/plugins/` — run `git submodule update --init` after cloning, and ensure `node` is on `PATH` for ponytail's and caveman's hooks. They only activate once you accept Claude Code's workspace-trust prompt.
 
 ## 9. The Public Site
@@ -281,7 +296,7 @@ Rules that keep this maintainable:
 ### Setting up a fresh clone
 1. `git clone --recurse-submodules` (or `git submodule update --init`), then `composer install && npm install`.
 2. Copy `.env.example` -> `.env`; run `php artisan key:generate`.
-3. Create the PostgreSQL database; run `php artisan migrate --seed`.
+3. Create the MariaDB databases and user (see section 7); run `php artisan migrate --seed`.
 4. `npm run build`, then `php artisan serve`.
 5. Change `FILAMENT_DEFAULT_ADMIN_*` values before the first seed; log in at `/admin` to edit the 404/500 pages.
 

@@ -1,6 +1,6 @@
 # `.ai/`
 
-Source of truth for AI-agent tooling in this boilerplate. `.claude/` and
+Source of truth for AI-agent tooling in this project. `.claude/` and
 `.opencode/` hold only config plus (when there's real content to link to)
 symlinks into this directory — they never hold the actual files themselves.
 

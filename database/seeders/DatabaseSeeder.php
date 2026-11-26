@@ -9,20 +9,23 @@ use Illuminate\Database\Seeder;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Seed the application's database. Runs on every deploy, so every seeder
+     * listed here must be idempotent and must never overwrite existing rows.
      */
     public function run(): void
     {
-        // Core reference data - runs in ALL environments including production
-        $this->call([
-            ErrorPageSeeder::class,
-        ]);
-
-        // Test/demo data seeders - only run in non-production environments
-        if (! app()->environment('production')) {
+        if (app()->isProduction()) {
             $this->call([
+                ErrorPageSeeder::class,
                 FilamentAdminUserSeeder::class,
             ]);
+
+            return;
         }
+
+        $this->call([
+            ErrorPageSeeder::class,
+            FilamentAdminUserSeeder::class,
+        ]);
     }
 }

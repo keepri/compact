@@ -11,7 +11,8 @@ return [
     'nav' => [
         ['key' => 'concert', 'route' => 'concert', 'cta' => true],
         ['key' => 'band', 'route' => 'band', 'cta' => false],
-        ['key' => 'contact', 'route' => 'contact', 'cta' => false],
+        // Contact temporarily disabled - restore together with its route in routes/web.php.
+        // ['key' => 'contact', 'route' => 'contact', 'cta' => false],
     ],
 
     /*

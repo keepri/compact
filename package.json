@@ -1,5 +1,5 @@
 {
-    "name": "laravel-filament-boilerplate",
+    "name": "compact",
     "description": "The website of Compact, built on Laravel 12, Filament v4, Livewire 3 and Tailwind CSS v4.",
     "private": true,
     "type": "module",

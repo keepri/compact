@@ -1,6 +1,6 @@
-# Laravel Boilerplate
+# Compact
 
-A reusable **Laravel 12** boilerplate for bootstrapping new projects, built on **Filament v4**, **Livewire 3**, and **Tailwind CSS v4**.
+The website of **Compact**, the Romanian rock band founded in 1976, built around its 50-year anniversary concert. Built on **Laravel 12**, **Filament v4**, **Livewire 3**, and **Tailwind CSS v4**.
 
 ## What's included
 
@@ -11,8 +11,8 @@ A reusable **Laravel 12** boilerplate for bootstrapping new projects, built on *
 - **en/ro i18n** — `SetLocale` middleware, `/lang/{locale}` switch route, Filament language switch, `spatie/laravel-translatable`
 - **CSRF auto-refresh** — Livewire 419 recovery hook
 - **Solid.js bridge** — lazy-mount JSX components from Blade via `solid-component` / `solid-props` attributes
-- **Docker** — a `Dockerfile` (PHP-FPM + nginx + Node, builds assets and migrates on boot) and a `docker-compose.yml` with two services: `app` and `queue`. **No database container is included** — point `DB_*` at a PostgreSQL you run yourself
-- **Makefile** — shortcuts for the dev loop (`make dev`, `make test`, `make format`, `make migrate`) and for `psql` backup/restore against your `DB_*` settings
+- **Docker** — a `Dockerfile` (PHP-FPM + nginx + Node, builds assets and migrates on boot) and a `docker-compose.yml` with two services: `app` and `queue`. **No database container is included** — point `DB_*` at a MariaDB you run yourself
+- **Makefile** — shortcuts for the dev loop (`make dev`, `make test`, `make format`, `make migrate`) and for `mariadb-dump` backup/restore against your `DB_*` settings
 - **AI-agent tooling** — `.ai/` is the source of truth (see `.ai/README.md`); ships the [ponytail](https://github.com/DietrichGebert/ponytail), [mattpocock/skills](https://github.com/mattpocock/skills), and [caveman](https://github.com/JuliusBrussee/caveman) Claude Code plugins as submodules
 
 ## Getting started
@@ -23,7 +23,7 @@ composer install && npm install
 cp .env.example .env
 # set APP_NAME and APP_URL, then:
 php artisan key:generate
-# create the PostgreSQL database, then:
+# create the MariaDB database, then:
 php artisan migrate --seed
 php artisan storage:link          # branding assets are served from storage/app/public
 npm run build
@@ -41,7 +41,7 @@ See `AGENTS.md` for full coding conventions and workflows.
 ## Testing
 
 ```bash
-php artisan test          # Pest, against the boilerplate_test PostgreSQL database
+php artisan test          # Pest, against the compact_test MariaDB database
 vendor/bin/pint           # PHP formatting
 vendor/bin/phpstan analyse --memory-limit=2G
 ```

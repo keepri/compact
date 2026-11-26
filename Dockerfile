@@ -11,14 +11,13 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     libmagickwand-dev \
     libzip-dev \
     libicu-dev \
-    libpq-dev \
     nginx \
     nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-RUN docker-php-ext-install pdo pdo_pgsql pgsql bcmath pcntl intl zip \
+RUN docker-php-ext-install pdo pdo_mysql bcmath pcntl intl zip \
     && pecl install imagick \
-    && docker-php-ext-enable imagick intl zip pdo_pgsql pgsql \
+    && docker-php-ext-enable imagick intl zip pdo_mysql \
     && rm -rf /var/lib/apt/lists/*
 
 ARG NODE_ENV=production

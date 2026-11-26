@@ -1,7 +1,7 @@
 ---
 name: filament-resource
 description: >
-  Scaffolds a new Filament v4 admin resource matching this boilerplate's
+  Scaffolds a new Filament v4 admin resource matching this project's
   exact structural convention (as established by the Roles resource):
   Resource/Schemas/Tables/Pages split, base Create/Edit pages, i18n
   navigation, toggleable columns, and a smoke test. Use when the user asks

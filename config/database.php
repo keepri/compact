@@ -7,12 +7,24 @@ declare(strict_types=1);
 | Database Configuration
 |--------------------------------------------------------------------------
 |
-| The project is PostgreSQL-only in every environment, so the only key worth
-| overriding is the default connection. The connection definitions themselves
-| come from vendor/laravel/framework/config/database.php.
+| The project is MariaDB-only in every environment (DirectAdmin hosting offers
+| nothing else). The connection definitions come from
+| vendor/laravel/framework/config/database.php.
+|
+| Laravel merges each connection as a whole, so the mariadb override starts
+| from the framework's own definition and changes one key: the session time
+| zone. The app writes timestamps in UTC; without this MariaDB reads them in
+| the server's local zone, rejects the hour the clocks skip in March and
+| shifts the hour they repeat in October.
 |
 */
 
+$framework = require base_path('vendor/laravel/framework/config/database.php');
+
 return [
-    'default' => env('DB_CONNECTION', 'pgsql'),
+    'default' => env('DB_CONNECTION', 'mariadb'),
+
+    'connections' => [
+        'mariadb' => [...$framework['connections']['mariadb'], 'timezone' => '+00:00'],
+    ],
 ];

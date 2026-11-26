@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Session;
 
 test('every public page renders', function (string $path): void {
     $this->get($path)->assertOk();
-})->with(['/', '/concert', '/formatia', '/contact']);
+})->with(['/', '/concert', '/formatia'/* , '/contact' */]);
 
 test('the home page shows the hero and links to the concert', function (): void {
     $response = $this->get('/');
@@ -26,14 +26,14 @@ test('public pages expose the shared social image meta tags', function (string $
         ->assertOk()
         ->assertSee('property="og:image" content="' . $metaImage . '"', false)
         ->assertSee('name="twitter:image" content="' . $metaImage . '"', false);
-})->with(['/', '/concert', '/formatia', '/contact']);
+})->with(['/', '/concert', '/formatia'/* , '/contact' */]);
 
 test('each page renders its own header title', function (string $path, string $key): void {
     $this->get($path)->assertOk()->assertSee(__("{$key}.header.title"));
 })->with([
     ['/concert', 'concert'],
     ['/formatia', 'band'],
-    ['/contact', 'contact'],
+    // ['/contact', 'contact'], // contact disabled
 ]);
 
 test('the band page lists the current lineup and every era', function (): void {
@@ -48,13 +48,14 @@ test('the band page lists the current lineup and every era', function (): void {
     }
 });
 
-test('the contact page shows every address as a mailto link', function (): void {
-    $response = $this->get('/contact')->assertOk();
-
-    foreach (config('site.contact') as $email) {
-        $response->assertSee('mailto:' . $email, false);
-    }
-});
+// Contact temporarily disabled - restore with the route in routes/web.php.
+// test('the contact page shows every address as a mailto link', function (): void {
+//     $response = $this->get('/contact')->assertOk();
+//
+//     foreach (config('site.contact') as $email) {
+//         $response->assertSee('mailto:' . $email, false);
+//     }
+// });
 
 test('pages render in romanian by default', function (): void {
     $this->get('/concert')
@@ -86,4 +87,10 @@ test('the header renders the mobile drawer', function (): void {
 
 test('istorie route is not defined', function (): void {
     $this->get('/istorie')->assertNotFound();
+});
+
+// Contact temporarily disabled - delete this test when /contact comes back.
+test('the contact page is disabled', function (): void {
+    $this->get('/contact')->assertNotFound();
+    $this->get('/')->assertOk()->assertDontSee('href="' . url('/contact') . '"', false);
 });

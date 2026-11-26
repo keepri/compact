@@ -120,7 +120,7 @@ cache-clear: ## Clear all cache
 	@echo "All caches cleared!"
 
 # Testing
-test: ## Run tests (PostgreSQL config comes from phpunit.xml)
+test: ## Run tests (MariaDB config comes from phpunit.xml)
 	@php artisan config:clear --ansi
 	@./vendor/bin/pest --parallel
 
@@ -146,13 +146,13 @@ analyse: ## Run static analysis
 	./vendor/bin/phpstan analyse --memory-limit=2G
 
 # Database
-db-shell: ## Open PostgreSQL shell
-	@PGPASSWORD=$${DB_PASSWORD:-postgres} psql -h $${DB_HOST:-127.0.0.1} -p $${DB_PORT:-5432} -U $${DB_USERNAME:-postgres} -d $${DB_DATABASE:-boilerplate}
+db-shell: ## Open MariaDB shell
+	@mariadb -h $${DB_HOST:-localhost} -P $${DB_PORT:-3306} -u $${DB_USERNAME:-compact} -p$${DB_PASSWORD:-compact} $${DB_DATABASE:-compact}
 
-db-backup: ## Backup PostgreSQL database to ./backups/
+db-backup: ## Backup MariaDB database to ./backups/
 	@mkdir -p backups
 	@echo "Creating database backup..."
-	@PGPASSWORD=$${DB_PASSWORD:-postgres} pg_dump -h $${DB_HOST:-127.0.0.1} -p $${DB_PORT:-5432} -U $${DB_USERNAME:-postgres} -d $${DB_DATABASE:-boilerplate} > backups/database-backup-$$(date +%Y%m%d-%H%M%S).sql
+	@mariadb-dump --single-transaction --routines -h $${DB_HOST:-localhost} -P $${DB_PORT:-3306} -u $${DB_USERNAME:-compact} -p$${DB_PASSWORD:-compact} $${DB_DATABASE:-compact} > backups/database-backup-$$(date +%Y%m%d-%H%M%S).sql
 	@echo "Backup completed! Check ./backups/ directory"
 
 db-restore: ## Restore database from backup (usage: make db-restore file=database-backup-20240115-120000.sql)
@@ -161,7 +161,7 @@ db-restore: ## Restore database from backup (usage: make db-restore file=databas
 		exit 1; \
 	fi
 	@echo "Restoring database from $(file)..."
-	@PGPASSWORD=$${DB_PASSWORD:-postgres} psql -h $${DB_HOST:-127.0.0.1} -p $${DB_PORT:-5432} -U $${DB_USERNAME:-postgres} -d $${DB_DATABASE:-boilerplate} < backups/$(file)
+	@mariadb -h $${DB_HOST:-localhost} -P $${DB_PORT:-3306} -u $${DB_USERNAME:-compact} -p$${DB_PASSWORD:-compact} $${DB_DATABASE:-compact} < backups/$(file)
 	@echo "Database restored successfully!"
 
 # Maintenance

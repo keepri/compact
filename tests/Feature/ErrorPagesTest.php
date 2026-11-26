@@ -42,3 +42,15 @@ test('an edited error page shows its new content on the next request', function 
 
     $this->get('/nonexistent-page')->assertNotFound()->assertSee('Refreshed 404');
 });
+
+test('re-running the seeder keeps error pages edited in the panel', function (): void {
+    $this->seed(ErrorPageSeeder::class);
+
+    ErrorPage::query()->where('slug', 'not_found')->update(['heading' => ['en' => 'Edited', 'ro' => 'Editat']]);
+
+    $this->seed(ErrorPageSeeder::class);
+
+    expect(ErrorPage::query()->where('slug', 'not_found')->firstOrFail()->getTranslations('heading'))
+        ->toBe(['en' => 'Edited', 'ro' => 'Editat'])
+        ->and(ErrorPage::query()->count())->toBe(2);
+});
