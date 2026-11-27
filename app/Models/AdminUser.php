@@ -9,6 +9,7 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Override;
 
 /**
  * @property int $id
@@ -53,6 +54,7 @@ class AdminUser extends Authenticatable implements FilamentUser
 
     use Notifiable;
 
+    #[Override]
     protected $table = 'users';
 
     /**
@@ -60,6 +62,7 @@ class AdminUser extends Authenticatable implements FilamentUser
      *
      * @var list<string>
      */
+    #[Override]
     protected $fillable = ['name', 'email', 'password'];
 
     /**
@@ -67,6 +70,7 @@ class AdminUser extends Authenticatable implements FilamentUser
      *
      * @var list<string>
      */
+    #[Override]
     protected $hidden = ['password', 'remember_token'];
 
     /**

@@ -87,5 +87,5 @@ test('only the hero image loads eagerly', function (): void {
     $eager = array_filter($matches[0], fn(string $tag): bool => ! str_contains($tag, 'loading="lazy"'));
 
     expect($eager)->toHaveCount(1)
-        ->and($eager[array_key_first($eager)])->toContain('fetchpriority="high"');
+        ->and(array_first($eager))->toContain('fetchpriority="high"');
 });

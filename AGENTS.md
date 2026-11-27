@@ -34,7 +34,7 @@ Rector enforces the **shape** of the code; Pint enforces its **formatting**. The
 - **Apply:** `make refactor` (or `composer rector`)
 - **Check without writing (CI):** `make refactor-check` (or `composer refactor:check`) - exits non-zero when changes are pending
 
-What is enabled (see `rector.php`): PHP 8.4 sets, the version-matched Laravel upgrade sets, and the prepared `deadCode`, `codeQuality`, `typeDeclarations`, `instanceOf` and `earlyReturn` sets, plus the Laravel code-quality, collection, `Arr`/`Str`, Eloquent-query-builder, if-helper, type-declaration and testing sets.
+What is enabled (see `rector.php`): PHP 8.5 sets, the version-matched Laravel upgrade sets, and the prepared `deadCode`, `codeQuality`, `typeDeclarations`, `instanceOf` and `earlyReturn` sets, plus the Laravel code-quality, collection, `Arr`/`Str`, Eloquent-query-builder, if-helper, type-declaration and testing sets.
 
 When adding a rule or set:
 
@@ -98,7 +98,7 @@ The individual tools, if you need to run one on its own:
 | Scope | Tool | Config |
 | --- | --- | --- |
 | PHP | `vendor/bin/pint` | `pint.json` (PSR-12 + project rules) |
-| Blade markup + Tailwind class order in Blade | `blade-formatter` over `resources/**/*.blade.php` | `.bladeformatterrc.json` (4-space indent, 80-column wrap, `sortTailwindcssClasses`) |
+| Blade markup + Tailwind class order in Blade | `blade-formatter` over `resources/**/*.blade.php` | `.bladeformatterrc.json` (4-space indent, 80-column wrap, `sortTailwindcssClasses`, `phpVersion` 8.4 - the newest its PHP parser accepts; 8.5 is rejected, and the setting only governs how PHP inside templates is parsed) |
 
 Two rules keep this stable — break either one and `format:check` starts failing:
 
@@ -315,7 +315,7 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 ## Foundational Context
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
-- php - 8.4.15
+- php - 8.5.13
 - filament/filament (FILAMENT) - v4
 - laravel/framework (LARAVEL) - v12
 - laravel/prompts (PROMPTS) - v0

@@ -10,6 +10,7 @@ use Override;
 
 class EditErrorPage extends EditRecord
 {
+    #[Override]
     protected static string $resource = ErrorPageResource::class;
 
     #[Override]

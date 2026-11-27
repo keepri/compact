@@ -18,10 +18,13 @@ use Override;
 
 class ErrorPageResource extends Resource
 {
+    #[Override]
     protected static ?string $model = ErrorPage::class;
 
+    #[Override]
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedExclamationTriangle;
 
+    #[Override]
     protected static ?int $navigationSort = 100;
 
     public static function getNavigationLabel(): string

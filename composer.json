@@ -6,7 +6,7 @@
     "keywords": ["laravel", "filament", "compact"],
     "license": "MIT",
     "require": {
-        "php": "^8.4",
+        "php": "^8.5",
         "bezhansalleh/filament-language-switch": "^4.0",
         "filament/filament": "^4.6",
         "laravel/framework": "^12.36",

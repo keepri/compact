@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Override;
 use Spatie\Translatable\HasTranslations;
 
 /**
@@ -40,6 +41,7 @@ class ErrorPage extends Model
     /** @var list<string> */
     public array $translatable = ['heading', 'message'];
 
+    #[Override]
     protected $fillable = [
         'slug',
         'type',
@@ -47,6 +49,7 @@ class ErrorPage extends Model
         'message',
     ];
 
+    #[Override]
     protected $casts = [
         'heading' => 'array',
         'message' => 'array',
