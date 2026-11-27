@@ -14,6 +14,12 @@ jobs:
     timeout-minutes: 15
     # Pull requests read this environment, so it must only ever hold test values.
     environment: testing
+    # Secrets are named one by one: GitHub flags toJSON(secrets) as an
+    # exfiltration pattern and holds the run for approval.
+    env:
+      APP_KEY: ${{ secrets.APP_KEY }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      FILAMENT_DEFAULT_ADMIN_PASSWORD: ${{ secrets.FILAMENT_DEFAULT_ADMIN_PASSWORD }}
 
     services:
       mariadb:
@@ -50,17 +56,15 @@ jobs:
           extensions: intl, zip, bcmath, pdo_mysql, mbstring
           coverage: none
 
-      # Every variable and secret of the job's GitHub environment becomes a real
-      # env var for the steps below, so the keys live only in GitHub. The
-      # heredoc form keeps a value from injecting extra lines. Under act:
-      # --var-file and --secret-file.
-      - name: Export the testing environment
+      # Every variable of the job's GitHub environment becomes a real env var
+      # for the steps below, so those keys live only in GitHub. The heredoc
+      # form keeps a value from injecting extra lines. Under act: --var-file
+      # and --secret-file.
+      - name: Export the testing environment's variables
         env:
           VARS: ${{ toJSON(vars) }}
-          SECRETS: ${{ toJSON(secrets) }}
         run: |
-          jq -rn 'env.VARS, env.SECRETS | fromjson | to_entries[]
-            | select(.key != "github_token")
+          jq -rn 'env.VARS | fromjson | to_entries[]
             | "\(.key)<<__ENV_EOF__\n\(.value)\n__ENV_EOF__"' >> "$GITHUB_ENV"
 
       # `pest --parallel` creates <DB_DATABASE>_test_<n> databases.
