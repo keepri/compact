@@ -1,0 +1,95 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    # Pull requests read this environment, so it must only ever hold test values.
+    environment: testing
+
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MARIADB_DATABASE: ${{ vars.DB_DATABASE }}
+          MARIADB_USER: ${{ vars.DB_USERNAME }}
+          MARIADB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        # Share the socket with the runner, so DB_HOST=localhost connects the
+        # way DirectAdmin does. Under act, also pass
+        # --container-options "-v /var/run/mysqld:/var/run/mysqld" and
+        # --env-file /dev/null (act injects ./.env into the job otherwise).
+        volumes:
+          - /var/run/mysqld:/var/run/mysqld
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # setup-node first: under act, setup-php's PATH changes hide the image's node.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: intl, zip, bcmath, pdo_mysql, mbstring
+          coverage: none
+
+      # Every variable and secret of the job's GitHub environment becomes a real
+      # env var for the steps below, so the keys live only in GitHub. The
+      # heredoc form keeps a value from injecting extra lines. Under act:
+      # --var-file and --secret-file.
+      - name: Export the testing environment
+        env:
+          VARS: ${{ toJSON(vars) }}
+          SECRETS: ${{ toJSON(secrets) }}
+        run: |
+          jq -rn 'env.VARS, env.SECRETS | fromjson | to_entries[]
+            | select(.key != "github_token")
+            | "\(.key)<<__ENV_EOF__\n\(.value)\n__ENV_EOF__"' >> "$GITHUB_ENV"
+
+      # `pest --parallel` creates <DB_DATABASE>_test_<n> databases.
+      - name: Grant the test user every test database
+        run: |
+          php <<'PHP'
+          <?php
+          $pdo = new PDO('mysql:unix_socket=/var/run/mysqld/mysqld.sock', 'root', getenv('DB_PASSWORD'));
+          $pdo->exec(sprintf(
+              "GRANT ALL ON `%s%%`.* TO '%s'@'%%'",
+              str_replace('_', '\_', getenv('DB_DATABASE')),
+              getenv('DB_USERNAME'),
+          ));
+          PHP
+
+      # --no-scripts: ide-helper:models would rewrite the model docblocks from
+      # the still-empty database. Run the two scripts the app needs by hand.
+      - name: Install PHP dependencies
+        run: |
+          composer install --no-interaction --no-progress --prefer-dist --no-scripts
+          php artisan package:discover --ansi
+          php artisan filament:upgrade
+
+      - run: npm ci
+
+      - run: npm run build
+
+      # Formatting and Rector are local concerns (`make finish`); CI only gates
+      # on what can break the site.
+      - run: make analyse
+
+      - run: make test
